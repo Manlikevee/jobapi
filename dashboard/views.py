@@ -52,9 +52,9 @@ def userprofile(request):
     edu = Universityserialaizer(edudata, many=True)
 
     context = {
-        'workexp': workexp,
-        'edu': edu,
-        'userprofile': userprofile
+        'workexp': workexp.data,
+        'edu': edu.data,
+        'userprofile': userprofile.data
     }
     return Response(context, status=status.HTTP_200_OK)
 
@@ -69,7 +69,7 @@ def usersaves(request):
     jobcardscount = Jobs.objects.filter(likes__in=[user]).all().count
 
     context = {
-        'jobcard': jobcard,
+        'jobcard': jobcard.data,
         'jobcardscount': jobcardscount,
     }
 
