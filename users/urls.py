@@ -16,6 +16,11 @@ urlpatterns = [
     path('', home, name='home'),
     path('token/', MyTokenObtainPairViews.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='custom_token_refresh'),
+    path('jobapprregister/', UserRegistrationView.as_view(), name='user-registration'),
+    path('emailverification/', Useremailaccountverification.as_view(), name='user-Useremailaccountverification'),
+    path('emailverification/verify/<str:auth_token>/', VerifyAccount.as_view(), name='verify-account'),
+    path('newemailverification/verify/<str:auth_token>/<str:reference>/', VerifymyAccount.as_view(),
+         name='newverify-account'),
 
 ]
 

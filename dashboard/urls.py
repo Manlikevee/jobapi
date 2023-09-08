@@ -13,10 +13,9 @@ router = DefaultRouter()
 
 
 urlpatterns = [
-
-
-
-
+    path('userdashboarddata', jobseekerdashboard, name='jobseekerdashboard' ),
+    path('userprofile', userprofile, name='userprofile' ),
+    path('usersaves', usersaves, name='usersaves')
 ]
 
 
