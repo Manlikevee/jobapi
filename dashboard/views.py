@@ -40,7 +40,7 @@ def jobseekerdashboard(request):
 
 
 
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def userprofile(request):
     user = User.objects.get(id=10)
@@ -60,7 +60,7 @@ def userprofile(request):
 
 
 
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def usersaves(request):
     user = User.objects.get(id=10)
