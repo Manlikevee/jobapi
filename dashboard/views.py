@@ -43,7 +43,7 @@ def jobseekerdashboard(request):
 # @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def userprofile(request):
-    user = User.objects.get(id=10)
+    user = User.objects.filter(id=10).first()
     user_profile = Profile.objects.filter(user=user).first()
     userprofile = Completeprofile(user_profile)
     workexpdata = workexperience.objects.filter(user=user).all()
@@ -63,7 +63,7 @@ def userprofile(request):
 # @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def usersaves(request):
-    user = User.objects.get(id=10)
+    user = User.objects.filter(id=10).first()
     jobcards = Jobs.objects.filter(likes__in=[user]).all().order_by('-id')
     jobcard = Jobserializer(jobcards, many=True)
     jobcardscount = Jobs.objects.filter(likes__in=[user]).all().count
