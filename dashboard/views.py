@@ -266,7 +266,7 @@ def usermessagecreate(request, id):
         return Response(context, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def messageportal(request, id):
     messagetone = get_object_or_404(messagestarter, messageid=id)
 
