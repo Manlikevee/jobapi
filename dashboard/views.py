@@ -206,6 +206,7 @@ def keyword(request):
 
 @permission_classes([IsAuthenticated])
 @login_required
+@api_view(['GET'])
 def usermessagecreate(request, id):
     myuser = get_object_or_404(User, id=id)
     print(myuser)
@@ -265,10 +266,9 @@ def usermessagecreate(request, id):
         return Response(context, status=status.HTTP_200_OK)
 
 
-
+@api_view(['GET'])
 def messageportal(request, id):
     messagetone = get_object_or_404(messagestarter, messageid=id)
-    massfold = get_object_or_404(messagefolder, messageid=messagetone)
 
     vee = datetime.now().date().strftime("%Y-%m-%d %H:%M:%S")
     if request.method == 'POST':
@@ -286,20 +286,12 @@ def messageportal(request, id):
             jsondata.testj.insert(0, dest12)
             jsondata.save()
 
-    massfolds = get_object_or_404(messagefolder, messageid=messagetone)
     mymessage = messagefolder.objects.filter(messageid=messagetone).first()
     messageserialized = messageserializer(mymessage)
-    context = {
-        'massfolds': massfolds,
-        'messagetone': messagetone,
-
-
-    }
+    print(messageserialized.data)
 
     apidata = {
         'messageserialized': messageserialized.data
     }
 
     return Response(apidata, status=status.HTTP_200_OK)
-
-    # return render(request, 'users/messagebox.html', context)

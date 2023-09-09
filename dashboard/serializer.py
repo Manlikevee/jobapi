@@ -39,18 +39,21 @@ class Featuresserializer(serializers.ModelSerializer):
 
 
 
-class messageserializer(serializers.ModelSerializer):
-    messageid = messagestarter()
-    class Meta:
-        model = messagefolder
-        fields = ['testj', 'lastupdated']
+
 
 
         
 class messagestarterserializer(serializers.ModelSerializer):
     sender = Userserializer()
     reciever = Userserializer()
-    message = messageserializer(source='messageid')
+
     class Meta:
         model = messagestarter
         fields = '__all__'
+
+
+class messageserializer(serializers.ModelSerializer):
+    messageid = messagestarterserializer()
+    class Meta:
+        model = messagefolder
+        fields = ['testj', 'lastupdated', 'messageid']
