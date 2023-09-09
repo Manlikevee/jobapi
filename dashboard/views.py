@@ -317,10 +317,10 @@ def messageportal(request, id):
 
 
 
-@permission_classes([IsAuthenticated])
-@api_view(['GET', 'POST'])
+# @permission_classes([IsAuthenticated])
+@api_view(['GET'])
 def userjobs(request):
-    jobcard = Jobs.objects.all().order_by('-id')
+    jobcard = Jobs.objects.all()
     jobcardscount = Jobs.objects.all().count
     jobserialized = Jobserializer(jobcard, many=True)
 
