@@ -279,12 +279,28 @@ def messageportal(request, id):
             jsondata = get_object_or_404(messagefolder, messageid=messagetone)
             jsondata.testj.insert(0, dest12)
             jsondata.save()
+            mymessage = messagefolder.objects.filter(messageid=messagetone).first()
+            messageserialized = messageserializer(mymessage)
+
+            apidata = {
+                'messageserialized': messageserialized.data
+            }
+
+            return Response(apidata, status=status.HTTP_200_OK)
         if messagetone.reciever == request.user:
             dest12 = {"sender": f"{messagetone.reciever}", "reciever": f"{request.user}", "messageid": f"{id}",
                       "messagetime": f"{vee}", "message": f"{keyword}"}
             jsondata = get_object_or_404(messagefolder, messageid=messagetone)
             jsondata.testj.insert(0, dest12)
             jsondata.save()
+            mymessage = messagefolder.objects.filter(messageid=messagetone).first()
+            messageserialized = messageserializer(mymessage)
+
+            apidata = {
+                'messageserialized': messageserialized.data
+            }
+
+            return Response(apidata, status=status.HTTP_200_OK)
 
     mymessage = messagefolder.objects.filter(messageid=messagetone).first()
     messageserialized = messageserializer(mymessage)

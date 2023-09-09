@@ -638,13 +638,13 @@ class jsonfolder(models.Model):
         return self.user.username
 
 
-class messagestarter(models.Model):
+class  messagestarter(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='senders')
     reciever = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recievers')
     messageid = models.BigIntegerField(null=True)
     messagetime = models.DateTimeField(default=now)
     message = models.TextField(blank=True, null=True)
-
+    mymessages = models.JSONField(blank=True, null=True, default=list)
     def __str__(self):
         return self.sender.username
 

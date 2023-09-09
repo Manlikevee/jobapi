@@ -10,8 +10,6 @@ from rest_framework_simplejwt.views import (
 router = DefaultRouter()
 
 
-
-
 urlpatterns = [
     path('userdashboarddata', jobseekerdashboard, name='jobseekerdashboard' ),
     path('userprofile', userprofile, name='userprofile' ),
