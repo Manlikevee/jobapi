@@ -20,7 +20,7 @@ urlpatterns = [
     path('keyword', keyword, name='keyword'),
     path('messageportal/<int:id>/', messageportal, name='messageportal'),
     path('usermessagecreate/<int:id>', usermessagecreate, name='usermessagecreate'),
-
+    path('userjobs', userjobs, name='userjobs'),
 
 
 

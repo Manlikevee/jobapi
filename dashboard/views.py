@@ -265,8 +265,9 @@ def usermessagecreate(request, id):
         }
         return Response(context, status=status.HTTP_200_OK)
 
-
+@permission_classes([IsAuthenticated])
 @api_view(['GET', 'POST'])
+
 def messageportal(request, id):
     messagetone = get_object_or_404(messagestarter, messageid=id)
 
@@ -312,3 +313,19 @@ def messageportal(request, id):
     }
 
     return Response(apidata, status=status.HTTP_200_OK)
+
+
+
+
+@permission_classes([IsAuthenticated])
+@api_view(['GET', 'POST'])
+def userjobs(request):
+    jobcard = Jobs.objects.all().order_by('-id')
+    jobcardscount = Jobs.objects.all().count
+    jobserialized = Jobserializer(jobcard, many=True)
+
+    context = {
+        'jobcards': jobserialized.data,
+        'jobcardscount': jobcardscount,
+    }
+    return Response(context, status=status.HTTP_200_OK)
