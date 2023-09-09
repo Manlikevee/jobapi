@@ -17,14 +17,14 @@ from users.serializer import *
 
 
 
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def jobseekerdashboard(request):
-    user = request.user
+    user = User.objects.filter(id=10).first()
     alluser = User.objects.exclude(id=10)
     allusers = Userserializer(alluser, many=True)
-    usecases = messagestarter.objects.filter(Q(sender=request.user) | Q(reciever=request.user)).all()
-    usecase = messageserializer(usecases)
+    usecases = messagestarter.objects.filter(Q(sender=user) | Q(reciever=user)).all()
+    usecase = messagestarterserializer(usecases, many=True)
     jobcard = Jobs.objects.all().order_by('-id')[:7]
     jobserialized = Jobserializer(jobcard, many=True)
     jobcardcount = Jobs.objects.filter(likes__in=[user]).all().order_by('-id').count()
