@@ -288,7 +288,7 @@ def messageportal(request, id):
 
     mymessage = messagefolder.objects.filter(messageid=messagetone).first()
     messageserialized = messageserializer(mymessage)
-    print(messageserialized.data)
+
 
     apidata = {
         'messageserialized': messageserialized.data
