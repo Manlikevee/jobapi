@@ -15,7 +15,18 @@ router = DefaultRouter()
 urlpatterns = [
     path('userdashboarddata', jobseekerdashboard, name='jobseekerdashboard' ),
     path('userprofile', userprofile, name='userprofile' ),
-    path('usersaves', usersaves, name='usersaves')
+    path('usersaves', usersaves, name='usersaves'),
+    path('like_post', like_post, name='like_post'),
+    path('unlike_post', unlike_post, name='unlike_post'),
+    path('userjobsdetail', userjobsdetail, name='userjobsdetail'),
+    path('keyword', keyword, name='keyword'),
+    path('messageportal/<int:id>/', messageportal, name='messageportal'),
+    path('usermessagecreate/<int:id>', usermessagecreate, name='usermessagecreate'),
+
+
+
+
+
 ]
 
 

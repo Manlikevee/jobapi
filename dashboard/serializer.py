@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from users.models import *
+from users.serializer import Userserializer
 
 
 class Jobserializer(serializers.ModelSerializer):
@@ -36,7 +37,17 @@ class Featuresserializer(serializers.ModelSerializer):
         fields = ['feature']
 
 
+class messagestarter(serializers.ModelSerializer):
+    sender = Userserializer()
+    reciever = Userserializer()
+    class Meta:
+        model = messagestarter
+        fields = '__all__'
+
 class messageserializer(serializers.ModelSerializer):
+    messageid = messagestarter()
     class Meta:
         model = messagefolder
         fields = '__all__'
+        
+

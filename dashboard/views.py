@@ -23,14 +23,15 @@ def jobseekerdashboard(request):
     user = request.user
     alluser = User.objects.exclude(id=10)
     allusers = Userserializer(alluser, many=True)
-    # usecase = messagestarter.objects.filter(Q(sender=request.user) | Q(reciever=request.user)).all()
+    usecases = messagestarter.objects.filter(Q(sender=request.user) | Q(reciever=request.user)).all()
+    usecase = messageserializer(usecases)
     jobcard = Jobs.objects.all().order_by('-id')[:7]
     jobserialized = Jobserializer(jobcard, many=True)
     jobcardcount = Jobs.objects.filter(likes__in=[user]).all().order_by('-id').count()
     # submitcount = Applications.objects.filter(user=request.user).count()
 
     context = {
-        # 'usecase': usecase,
+        'usecase': usecase.data,
         'jobserialized': jobserialized.data,
         # 'submitcount':submitcount,
         'jobcardcount':jobcardcount,
