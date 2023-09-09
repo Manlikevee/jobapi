@@ -17,10 +17,10 @@ from users.serializer import *
 
 
 
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def jobseekerdashboard(request):
-    user = User.objects.filter(id=10).first()
+    user = request.user
     alluser = User.objects.exclude(id=10)
     allusers = Userserializer(alluser, many=True)
     usecases = messagestarter.objects.filter(Q(sender=user) | Q(reciever=user)).all()
