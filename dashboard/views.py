@@ -273,6 +273,7 @@ def messageportal(request, id):
     messagetonedata = messagestarterserializer(messagetone)
     vee = datetime.now().date().strftime("%Y-%m-%d %H:%M:%S")
     if request.method == 'POST':
+
         keyword = request.data.get('keyword')
         print(keyword)
         if messagetone.sender == request.user:
