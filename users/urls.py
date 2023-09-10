@@ -22,6 +22,8 @@ urlpatterns = [
     path('newemailverification/verify/<str:auth_token>/<str:reference>/', VerifymyAccount.as_view(),
          name='newverify-account'),
 
+
+
 ]
 
 

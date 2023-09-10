@@ -513,3 +513,16 @@ def jobprint(request):
                             )
 
     return HttpResponse('hello world')
+
+
+
+@permission_classes([IsAuthenticated])
+@api_view(['GET'])
+def userjobssinglepage(request, id):
+    jobcard = Jobs.objects.filter(id=id)
+    jobserialized = Jobserializer(jobcard)
+
+    context = {
+        'jobcard': jobserialized.data,
+    }
+    return Response(context, status=status.HTTP_200_OK)

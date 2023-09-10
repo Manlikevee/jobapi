@@ -25,7 +25,7 @@ urlpatterns = [
     path('mupload_image/', upload_image, name='upload_image'),
     path('testcases/', testcases, name='testcases'),
     path('jobprint/', jobprint, name='jobprint'),
-
+    path('userjobssinglepage/<int:id>', userjobssinglepage, name='userjobssinglepage'),
 
 
 
