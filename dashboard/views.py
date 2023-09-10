@@ -273,39 +273,79 @@ def messageportal(request, id):
     messagetonedata = messagestarterserializer(messagetone)
     vee = datetime.now().date().strftime("%Y-%m-%d %H:%M:%S")
     if request.method == 'POST':
-
+        myimage = request.data.get('myimg')
         keyword = request.data.get('keyword')
         print(keyword)
         if messagetone.sender == request.user:
-            dest12 = {"sender": f"{request.user}", "reciever": f"{messagetone.reciever}", "messageid": f"{id}",
-                      "messagetime": f"{vee}", "message": f"{keyword}", "image": False}
-            jsondata = get_object_or_404(messagefolder, messageid=messagetone)
-            jsondata.testj.append(dest12)
-            jsondata.save()
-            mymessage = messagefolder.objects.filter(messageid=messagetone).first()
-            messageserialized = messageserializer(mymessage)
+            if myimage:
+                serializer = UploadedImage.objects.create(image=myimage)
+                serializer.save()
+                serializeddata = Imagetest(serializer)
+                dest12 = {"sender": f"{request.user}", "reciever": f"{messagetone.reciever}", "messageid": f"{id}",
+                          "messagetime": f"{vee}", "message": f"{keyword}", "image": True, "imageurl" : serializeddata.data }
+                jsondata = get_object_or_404(messagefolder, messageid=messagetone)
+                jsondata.testj.append(dest12)
+                jsondata.save()
+                mymessage = messagefolder.objects.filter(messageid=messagetone).first()
+                messageserialized = messageserializer(mymessage)
 
-            apidata = {
-                'messageserialized': messageserialized.data,
-                'usersdataserialized': messagetonedata.data
-            }
+                apidata = {
+                    'messageserialized': messageserialized.data,
+                    'usersdataserialized': messagetonedata.data
+                }
+                return Response(apidata, status=status.HTTP_200_OK)
+            else:
+                dest12 = {"sender": f"{request.user}", "reciever": f"{messagetone.reciever}", "messageid": f"{id}",
+                          "messagetime": f"{vee}", "message": f"{keyword}", "image": False}
+                jsondata = get_object_or_404(messagefolder, messageid=messagetone)
+                jsondata.testj.append(dest12)
+                jsondata.save()
+                mymessage = messagefolder.objects.filter(messageid=messagetone).first()
+                messageserialized = messageserializer(mymessage)
 
-            return Response(apidata, status=status.HTTP_200_OK)
+                apidata = {
+                    'messageserialized': messageserialized.data,
+                    'usersdataserialized': messagetonedata.data
+                }
+
+                return Response(apidata, status=status.HTTP_200_OK)
         if messagetone.reciever == request.user:
-            dest12 = {"sender": f"{messagetone.reciever}", "reciever": f"{request.user}", "messageid": f"{id}",
-                      "messagetime": f"{vee}", "message": f"{keyword}", "image": False }
-            jsondata = get_object_or_404(messagefolder, messageid=messagetone)
-            jsondata.testj.append(dest12)
-            jsondata.save()
-            mymessage = messagefolder.objects.filter(messageid=messagetone).first()
-            messageserialized = messageserializer(mymessage)
+            if myimage:
+                serializer = UploadedImage.objects.create(image=myimage)
+                serializer.save()
+                serializeddata = Imagetest(serializer)
+                dest12 = {"sender": f"{messagetone.reciever}", "reciever": f"{request.user}", "messageid": f"{id}",
+                          "messagetime": f"{vee}", "message": f"{keyword}", "image": True, "imageurl" : serializeddata.data }
+                jsondata = get_object_or_404(messagefolder, messageid=messagetone)
+                jsondata.testj.append(dest12)
+                jsondata.save()
+                mymessage = messagefolder.objects.filter(messageid=messagetone).first()
+                messageserialized = messageserializer(mymessage)
 
-            apidata = {
-                'messageserialized': messageserialized.data,
-                'usersdataserialized': messagetonedata.data
-            }
+                apidata = {
+                    'messageserialized': messageserialized.data,
+                    'usersdataserialized': messagetonedata.data
+                }
 
-            return Response(apidata, status=status.HTTP_200_OK)
+                return Response(apidata, status=status.HTTP_200_OK)
+            else:
+                dest12 = {"sender": f"{messagetone.reciever}", "reciever": f"{request.user}", "messageid": f"{id}",
+                          "messagetime": f"{vee}", "message": f"{keyword}", "image": False}
+                jsondata = get_object_or_404(messagefolder, messageid=messagetone)
+                jsondata.testj.append(dest12)
+                jsondata.save()
+                mymessage = messagefolder.objects.filter(messageid=messagetone).first()
+                messageserialized = messageserializer(mymessage)
+
+                apidata = {
+                    'messageserialized': messageserialized.data,
+                    'usersdataserialized': messagetonedata.data
+                }
+
+                return Response(apidata, status=status.HTTP_200_OK)
+
+
+
 
     mymessage = messagefolder.objects.filter(messageid=messagetone).first()
     messageserialized = messageserializer(mymessage)
