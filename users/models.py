@@ -651,7 +651,7 @@ class  messagestarter(models.Model):
 
 class messagefolder(models.Model):
     messageid = models.OneToOneField(messagestarter, on_delete=models.CASCADE)
-    lastupdated = models.DateTimeField(default=now)
+    lastupdated = models.DateTimeField(auto_now=True)
     testj = models.JSONField(blank=True, null=True, default=list)
 
     def __str__(self):
