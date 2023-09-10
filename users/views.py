@@ -17,6 +17,8 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+
+from dashboard.serializer import Imagetest
 # Create your views here.
 from .models import Profile
 from .serializer import *
@@ -160,3 +162,20 @@ class VerifymyAccount(APIView):
                 return Response({'error': 'Invalid auth token.'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+@api_view(['POST'])
+def upload_image(request):
+    if request.method == 'POST':
+        myimage = request.data.get('myimg')  # Assuming you're sending the image as 'myimg'
+        print(myimage)
+        serializer = UploadedImage.objects.create(image=myimage)
+        if myimage:
+            serializer.save()
+            serializeddata = Imagetest(serializer)
+            return Response(serializeddata.data, status=status.HTTP_201_CREATED)  # Use 201 Created status for successful resource creation
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)  # Return errors if the serializer is not valid
+    else:
+        return Response("Method not allowed", status=status.HTTP_405_METHOD_NOT_ALLOWED)

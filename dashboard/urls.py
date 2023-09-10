@@ -1,5 +1,6 @@
 from django.urls import path, include
 
+from users.views import upload_image
 from .views import *
 from django.contrib.auth import views as auth_view
 from rest_framework.routers import DefaultRouter
@@ -21,6 +22,7 @@ urlpatterns = [
     path('messageportal/<int:id>/', messageportal, name='messageportal'),
     path('usermessagecreate/<int:id>', usermessagecreate, name='usermessagecreate'),
     path('userjobs', userjobs, name='userjobs'),
+    path('mupload_image/', upload_image, name='upload_image'),
 
 
 

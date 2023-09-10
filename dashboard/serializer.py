@@ -37,12 +37,6 @@ class Featuresserializer(serializers.ModelSerializer):
         fields = ['feature']
 
 
-
-
-
-
-
-        
 class messagestarterserializer(serializers.ModelSerializer):
     sender = Userserializer()
     reciever = Userserializer()
@@ -54,6 +48,13 @@ class messagestarterserializer(serializers.ModelSerializer):
 
 class messageserializer(serializers.ModelSerializer):
     messageid = messagestarterserializer()
+
     class Meta:
         model = messagefolder
         fields = ['testj', 'lastupdated', 'messageid']
+
+
+class Imagetest(serializers.ModelSerializer):
+    class Meta:
+        model = UploadedImage
+        fields = ['image']

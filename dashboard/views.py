@@ -277,7 +277,7 @@ def messageportal(request, id):
         print(keyword)
         if messagetone.sender == request.user:
             dest12 = {"sender": f"{request.user}", "reciever": f"{messagetone.reciever}", "messageid": f"{id}",
-                      "messagetime": f"{vee}", "message": f"{keyword}"}
+                      "messagetime": f"{vee}", "message": f"{keyword}", "image": False}
             jsondata = get_object_or_404(messagefolder, messageid=messagetone)
             jsondata.testj.append(dest12)
             jsondata.save()
@@ -292,7 +292,7 @@ def messageportal(request, id):
             return Response(apidata, status=status.HTTP_200_OK)
         if messagetone.reciever == request.user:
             dest12 = {"sender": f"{messagetone.reciever}", "reciever": f"{request.user}", "messageid": f"{id}",
-                      "messagetime": f"{vee}", "message": f"{keyword}"}
+                      "messagetime": f"{vee}", "message": f"{keyword}", "image": False }
             jsondata = get_object_or_404(messagefolder, messageid=messagetone)
             jsondata.testj.append(dest12)
             jsondata.save()
