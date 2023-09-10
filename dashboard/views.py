@@ -14,13 +14,40 @@ from users.models import *
 from users.serializer import *
 # Create your views here.
 
+@api_view(['GET'])
+def testcases(request):
+    current_user = User.objects.filter(id=23).first()
 
+    # Query messages where the current user is either the sender or receiver
+    messages = messagestarter.objects.filter(
+        Q(sender=current_user) | Q(reciever=current_user)
+    )
+
+    # Query messagefolder model for all message IDs in the selected messages
+    all_messages_folders = messagefolder.objects.filter(messageid__in=messages).all()
+
+    all_messages_folders_serializer = messageserializer(all_messages_folders, many=True)
+
+    context = {
+        'all_messages_folders': all_messages_folders_serializer.data,
+    }
+
+    return Response(context, status=status.HTTP_200_OK)
 
 
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def jobseekerdashboard(request):
+
     user = request.user
+    # Query messages where the current user is either the sender or receiver
+    messages = messagestarter.objects.filter(
+        Q(sender=user) | Q(reciever=user)
+    )
+
+    # Query messagefolder model for all message IDs in the selected messages
+    all_messages_folders = messagefolder.objects.filter(messageid__in=messages).all()
+    all_messages_folders_serializer = messageserializer(all_messages_folders, many=True)
     alluser = User.objects.exclude(id=10)
     allusers = Userserializer(alluser, many=True)
     usecases = messagestarter.objects.filter(Q(sender=user) | Q(reciever=user)).all()
@@ -32,6 +59,7 @@ def jobseekerdashboard(request):
 
     context = {
         'usecase': usecase.data,
+        'allmessages' : all_messages_folders_serializer.data,
         'jobserialized': jobserialized.data,
         # 'submitcount':submitcount,
         'jobcardcount':jobcardcount,

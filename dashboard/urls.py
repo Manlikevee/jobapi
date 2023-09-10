@@ -23,6 +23,8 @@ urlpatterns = [
     path('usermessagecreate/<int:id>', usermessagecreate, name='usermessagecreate'),
     path('userjobs', userjobs, name='userjobs'),
     path('mupload_image/', upload_image, name='upload_image'),
+    path('testcases/', testcases, name='testcases'),
+
 
 
 
