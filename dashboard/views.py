@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import permission_classes, api_view
@@ -13,6 +13,10 @@ from .serializer import *
 from users.models import *
 from users.serializer import *
 # Create your views here.
+from faker import Faker
+
+fake = Faker()
+
 
 @api_view(['GET'])
 def testcases(request):
@@ -38,7 +42,6 @@ def testcases(request):
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def jobseekerdashboard(request):
-
     user = request.user
     # Query messages where the current user is either the sender or receiver
     messages = messagestarter.objects.filter(
@@ -59,18 +62,14 @@ def jobseekerdashboard(request):
 
     context = {
         'usecase': usecase.data,
-        'allmessages' : all_messages_folders_serializer.data,
+        'allmessages': all_messages_folders_serializer.data,
         'jobserialized': jobserialized.data,
         # 'submitcount':submitcount,
-        'jobcardcount':jobcardcount,
+        'jobcardcount': jobcardcount,
         'allusers': allusers.data
     }
 
     return Response(context, status=status.HTTP_200_OK)
-
-
-
-
 
 
 @permission_classes([IsAuthenticated])
@@ -92,7 +91,6 @@ def userprofile(request):
     return Response(context, status=status.HTTP_200_OK)
 
 
-
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def usersaves(request):
@@ -107,7 +105,6 @@ def usersaves(request):
     }
 
     return Response(context, status=status.HTTP_200_OK)
-
 
 
 def like_post(request):
@@ -137,7 +134,6 @@ def like_post(request):
 
     # Return an error response for unsupported methods
     return JsonResponse({'saved': False, 'message': 'Invalid request method'})
-
 
 
 def like_blog(request):
@@ -171,10 +167,6 @@ def like_blog(request):
     return JsonResponse({'saved': False, 'message': 'Invalid request method'})
 
 
-
-
-
-
 def unlike_post(request, id):
     post = get_object_or_404(Jobs, id=id)
     post.likes.remove(request.user)
@@ -183,12 +175,11 @@ def unlike_post(request, id):
     return JsonResponse({'likes': likes_count})
 
 
-
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def userjobsdetail(request, id):
     jobdetails = get_object_or_404(Jobs, id=id)
-    jobdetail =  Jobserializer(jobdetails)
+    jobdetail = Jobserializer(jobdetails)
     jobcard = Jobs.objects.all().exclude(id=jobdetails.id)[:4]
     jobcards = Jobserializer(jobcard, many=True)
     # user_publication_set = set(request.user.blogpost_like.values_list('id', flat=True))
@@ -221,15 +212,14 @@ def keyword(request):
         else:
             if keyword.is_valid:
                 if keywordcount >= myuserprofile:
-                    return Response({'message': 'You Have Exceeded Your Keyword Limit which is 5'}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message': 'You Have Exceeded Your Keyword Limit which is 5'},
+                                    status=status.HTTP_400_BAD_REQUEST)
                 else:
                     vee = Jobsalert.objects.create(user=request.user, keyword=keyword)
                     vee.save()
                     return Response({'message': 'Key Word Added Successfully'}, status=status.HTTP_200_OK)
     else:
         return Response({'message': 'We Are Unable To Process Your Request'}, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 
 @permission_classes([IsAuthenticated])
@@ -293,9 +283,9 @@ def usermessagecreate(request, id):
         }
         return Response(context, status=status.HTTP_200_OK)
 
+
 @permission_classes([IsAuthenticated])
 @api_view(['GET', 'POST'])
-
 def messageportal(request, id):
     messagetone = get_object_or_404(messagestarter, messageid=id)
     messagetonedata = messagestarterserializer(messagetone)
@@ -310,7 +300,8 @@ def messageportal(request, id):
                 serializer.save()
                 serializeddata = Imagetest(serializer)
                 dest12 = {"sender": f"{request.user}", "reciever": f"{messagetone.reciever}", "messageid": f"{id}",
-                          "messagetime": f"{vee}", "message": f"{keyword}", "image": True, "imageurl" : serializeddata.data }
+                          "messagetime": f"{vee}", "message": f"{keyword}", "image": True,
+                          "imageurl": serializeddata.data}
                 jsondata = get_object_or_404(messagefolder, messageid=messagetone)
                 jsondata.testj.append(dest12)
                 jsondata.save()
@@ -343,7 +334,8 @@ def messageportal(request, id):
                 serializer.save()
                 serializeddata = Imagetest(serializer)
                 dest12 = {"sender": f"{messagetone.reciever}", "reciever": f"{request.user}", "messageid": f"{id}",
-                          "messagetime": f"{vee}", "message": f"{keyword}", "image": True, "imageurl" : serializeddata.data }
+                          "messagetime": f"{vee}", "message": f"{keyword}", "image": True,
+                          "imageurl": serializeddata.data}
                 jsondata = get_object_or_404(messagefolder, messageid=messagetone)
                 jsondata.testj.append(dest12)
                 jsondata.save()
@@ -372,12 +364,8 @@ def messageportal(request, id):
 
                 return Response(apidata, status=status.HTTP_200_OK)
 
-
-
-
     mymessage = messagefolder.objects.filter(messageid=messagetone).first()
     messageserialized = messageserializer(mymessage)
-
 
     apidata = {
         'messageserialized': messageserialized.data,
@@ -387,12 +375,10 @@ def messageportal(request, id):
     return Response(apidata, status=status.HTTP_200_OK)
 
 
-
-
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def userjobs(request):
-    jobcard = Jobs.objects.all()
+    jobcard = Jobs.objects.all().order_by('-id')
     jobcardscount = Jobs.objects.all().count()
     jobserialized = Jobserializer(jobcard, many=True)
 
@@ -401,3 +387,129 @@ def userjobs(request):
         'jobcardscount': jobcardscount,
     }
     return Response(context, status=status.HTTP_200_OK)
+
+
+import random
+
+
+def jobprint(request):
+    # Generate a fake job title
+    keywords = [
+        "software development",
+        "data science",
+        "product management",
+        "marketing management",
+        "sales and business development",
+        "customer support",
+        "financial planning and analysis",
+        "human resources",
+        "user experience (UX) design",
+        "user interface (UI) design",
+        "full-stack development",
+        "front-end development",
+        "back-end development",
+        "cloud computing",
+        "DevOps",
+        "database administration",
+        "content marketing",
+        "social media management",
+        "content strategy",
+        "cybersecurity",
+        "network security",
+        "IT support",
+        "project coordination",
+        "agile methodology",
+        "quality control",
+        "mobile app development",
+        "web design and development",
+        "e-commerce management",
+        "SEO optimization",
+        "data entry and analysis",
+        "market research",
+        "public relations",
+        "event planning",
+        "legal counsel",
+        "health and safety management",
+        "supply chain management",
+        "logistics coordination",
+        "environmental sustainability",
+        "data visualization",
+        "systems architecture",
+        "brand management",
+        "video production",
+        "multimedia design",
+        "gaming development",
+        "education and training",
+        "non-profit management",
+        "project scheduling",
+        "research and development",
+        "healthcare administration",
+        "hospitality management",
+    ]
+
+    job_description_templates = [
+        "Join our team as a {job_title} in {job_location}. We are seeking a skilled {job_service} professional to {job_action}. Your role will involve {job_responsibilities}.",
+        "Are you ready for a rewarding career as a {job_title} in {job_location}? We're looking for an experienced {job_service} expert to {job_action}. Your responsibilities will include {job_responsibilities}.",
+        "We're hiring a {job_title} based in {job_location}. If you have expertise in {job_service}, apply now. You'll be responsible for {job_action} and {job_responsibilities}.",
+        "As a {job_title} in {job_location}, you'll lead our {job_team} to {job_action}. Your role includes {job_responsibilities}.",
+        "Become a {job_title} in {job_location} and make a difference in {job_service}. You'll be responsible for {job_action} and {job_responsibilities}.",
+        "Join us as a {job_title} in {job_location}. We're looking for a {job_service} professional to {job_action}. Your contributions will include {job_responsibilities}.",
+        "We're seeking a talented {job_title} based in {job_location}. If you're passionate about {job_service}, apply now. Your role involves {job_action} and {job_responsibilities}.",
+        "As a {job_title} in {job_location}, you will work closely with our {job_team} to {job_action}. Your responsibilities include {job_responsibilities}.",
+        "Start your career as a {job_title} in {job_location}. We need a {job_service} expert to {job_action}. Your role will encompass {job_responsibilities}.",
+        "Join our {job_team} in {job_location} as a {job_title}. We're looking for someone with {job_service} skills to {job_action}. Your contributions will be in {job_responsibilities}.",
+    ]
+
+    # List of potential values for placeholders
+    job_titles = ["Software Engineer", "Data Analyst", "Marketing Manager", "Sales Representative", "UX/UI Designer",
+                  "Project Manager", "Financial Analyst", "Product Designer", "Customer Success Specialist",
+                  "Business Analyst"]
+    job_locations = ["New York", "San Francisco", "Los Angeles", "Chicago", "Boston", "London", "Berlin", "Tokyo",
+                     "Sydney", "Toronto"]
+    job_services = ["software development", "data analysis", "marketing strategy", "customer relations",
+                    "financial analysis", "project management", "product design", "business development",
+                    "quality assurance", "digital marketing"]
+    job_actions = ["lead a team of professionals", "develop cutting-edge solutions", "drive marketing campaigns",
+                   "manage client relationships", "analyze financial data", "oversee project delivery",
+                   "design innovative products", "expand our market presence", "ensure product quality",
+                   "optimize online advertising"]
+    job_responsibilities = ["leading projects", "collaborating with cross-functional teams",
+                            "delivering exceptional results", "meeting deadlines", "ensuring quality",
+                            "driving innovation", "managing budgets", "implementing strategies",
+                            "conducting data analysis", "customer acquisition"]
+    job_teams = ["a talented group of professionals", "a cross-functional team", "our dedicated engineering team",
+                 "a group of creative designers", "a high-performing sales team", "a dynamic marketing department",
+                 "our innovative research team", "a customer-focused support team", "a skilled development team",
+                 "a collaborative project management team"]
+
+    # Generate a random job title
+    user = User.objects.filter(id=10).first()
+    for _ in range(10):
+        job_title = fake.job()
+
+        # Generate a random job location
+        job_location = fake.city()
+
+        job_description_template = random.choice(job_description_templates)
+        job_title = job_title
+        job_location = job_location
+        job_service = random.choice(job_services)
+        job_action = random.choice(job_actions)
+        job_responsibility = random.choice(job_responsibilities)
+        job_team = random.choice(job_teams)
+
+        job_description = job_description_template.format(
+            job_title=job_title,
+            job_location=job_location,
+            job_service=job_service,
+            job_action=job_action,
+            job_responsibilities=job_responsibility,
+            job_team=job_team,
+        )
+
+        Jobs.objects.create(jobtitle=job_title, jobservice=random.choice(keywords), joblocation=job_location,
+                            jobminimumexperience=10, jobdescription=job_description, user=user,
+                            workinglevel='Senior Level', jobemploymenttype='Full-Time'
+                            )
+
+    return HttpResponse('hello world')
