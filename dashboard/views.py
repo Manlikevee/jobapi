@@ -270,7 +270,7 @@ def usermessagecreate(request, id):
 
 def messageportal(request, id):
     messagetone = get_object_or_404(messagestarter, messageid=id)
-
+    messagetonedata = messagestarterserializer(messagetone)
     vee = datetime.now().date().strftime("%Y-%m-%d %H:%M:%S")
     if request.method == 'POST':
         keyword = request.data.get('keyword')
@@ -285,7 +285,8 @@ def messageportal(request, id):
             messageserialized = messageserializer(mymessage)
 
             apidata = {
-                'messageserialized': messageserialized.data
+                'messageserialized': messageserialized.data,
+                'usersdataserialized': messagetonedata.data
             }
 
             return Response(apidata, status=status.HTTP_200_OK)
@@ -299,7 +300,8 @@ def messageportal(request, id):
             messageserialized = messageserializer(mymessage)
 
             apidata = {
-                'messageserialized': messageserialized.data
+                'messageserialized': messageserialized.data,
+                'usersdataserialized': messagetonedata.data
             }
 
             return Response(apidata, status=status.HTTP_200_OK)
@@ -309,7 +311,8 @@ def messageportal(request, id):
 
 
     apidata = {
-        'messageserialized': messageserialized.data
+        'messageserialized': messageserialized.data,
+        'usersdataserialized': messagetonedata.data
     }
 
     return Response(apidata, status=status.HTTP_200_OK)
