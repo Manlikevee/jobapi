@@ -46,7 +46,7 @@ def jobseekerdashboard(request):
     )
 
     # Query messagefolder model for all message IDs in the selected messages
-    all_messages_folders = messagefolder.objects.filter(messageid__in=messages).all()
+    all_messages_folders = messagefolder.objects.filter(messageid__in=messages).all().order_by('-lastupdated')
     all_messages_folders_serializer = messageserializer(all_messages_folders, many=True)
     alluser = User.objects.exclude(id=10)
     allusers = Userserializer(alluser, many=True)
