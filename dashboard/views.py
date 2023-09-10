@@ -519,7 +519,7 @@ def jobprint(request):
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def userjobssinglepage(request, id):
-    jobcard = Jobs.objects.filter(id=id)
+    jobcard = Jobs.objects.filter(id=id).first()
     jobserialized = Jobserializer(jobcard)
 
     context = {
