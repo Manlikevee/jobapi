@@ -289,7 +289,7 @@ def usermessagecreate(request, id):
 def messageportal(request, id):
     messagetone = get_object_or_404(messagestarter, messageid=id)
     messagetonedata = messagestarterserializer(messagetone)
-    vee = datetime.now().date().strftime("%Y-%m-%d %H:%M:%S")
+    vee = datetime.now()
     if request.method == 'POST':
         myimage = request.data.get('myimg')
         keyword = request.data.get('keyword')
@@ -526,3 +526,9 @@ def userjobssinglepage(request, id):
         'jobcard': jobserialized.data,
     }
     return Response(context, status=status.HTTP_200_OK)
+
+def timetest(request):
+    vee = datetime.now().date().strftime("%Y-%m-%d %H:%M:%S")
+    print(vee)
+    veetwo =    datetime.now()
+    print(veetwo)
