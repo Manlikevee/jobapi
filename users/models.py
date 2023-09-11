@@ -610,6 +610,7 @@ class Jobs(models.Model):
     payment_data = models.JSONField(blank=True, null=True, default=list)
     likes = models.ManyToManyField(User, related_name='blogpost_like')
     applied = models.ManyToManyField(User, related_name='job_applied')
+    last_seen = models.DateTimeField(default=now, null=True, blank=True)
     tags = TaggableManager()
 
     def number_of_likes(self):

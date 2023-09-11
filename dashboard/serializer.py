@@ -50,10 +50,6 @@ class messagestarterserializer(serializers.ModelSerializer):
     sender_profile = ProfileSerializer(source='sender.profile', read_only=True)
     receiver_profile = ProfileSerializer(source='reciever.profile', read_only=True)
 
-
-
-
-
     class Meta:
         model = messagestarter
         fields = '__all__'
