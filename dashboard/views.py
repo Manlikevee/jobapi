@@ -117,7 +117,7 @@ def usersaves(request):
     jobcardscount = Jobs.objects.filter(likes__in=[user]).all().count
 
     context = {
-        'jobcard': jobcards.data,
+        'jobcard': jobcard.data,
         'jobcardscount': jobcardscount,
     }
 
@@ -151,7 +151,7 @@ def like_post(request):
                 'message': message
             }
 
-            return JsonResponse(context)
+            return Response(context, status=status.HTTP_200_OK)
         else:
             # If no, add the current user to the post's saved_by ManyToMany field
             post.likes.add(request.user)
@@ -166,7 +166,7 @@ def like_post(request):
                 'message': message
             }
 
-            return JsonResponse(context)
+            return Response(context, status=status.HTTP_200_OK)
 
     # Return an error response for unsupported methods
     return JsonResponse({'saved': False, 'message': 'Invalid request method'})
