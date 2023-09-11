@@ -123,11 +123,12 @@ def usersaves(request):
 
     return Response(context, status=status.HTTP_200_OK)
 
-
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def like_post(request):
     if request.method == 'POST':
         # Get the post ID from the POST data
-        post_id = request.POST.get('post_id')
+        post_id = request.data.get('post_id')
 
         # Retrieve the post object from the database
         try:
@@ -141,13 +142,31 @@ def like_post(request):
             post.likes.remove(request.user)
             saved = False
             message = 'Post unsaved successfully'
+            jobcard = Jobs.objects.all().order_by('-id')
+            jobserialized = Jobserializer(jobcard, many=True)
+
+            context = {
+                'jobcards': jobserialized.data,
+                'saved': saved,
+                'message': message
+            }
+
+            return JsonResponse(context)
         else:
             # If no, add the current user to the post's saved_by ManyToMany field
             post.likes.add(request.user)
             saved = True
             message = 'Post saved successfully'
+            jobcard = Jobs.objects.all().order_by('-id')
+            jobserialized = Jobserializer(jobcard, many=True)
 
-        return JsonResponse({'saved': saved, 'message': message})
+            context = {
+                'jobcards': jobserialized.data,
+                'saved': saved,
+                'message': message
+            }
+
+            return JsonResponse(context)
 
     # Return an error response for unsupported methods
     return JsonResponse({'saved': False, 'message': 'Invalid request method'})
