@@ -44,6 +44,11 @@ def testcases(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def jobseekerdashboard(request):
+    current_time = timezone.now()
+    Profile.objects.update_or_create(
+        user=request.user,
+        defaults={'last_seen': current_time}
+    )
     user = request.user
     # Query messages where the current user is either the sender or receiver
     messages = messagestarter.objects.filter(
@@ -78,8 +83,10 @@ def jobseekerdashboard(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def userprofile(request):
-    user = request.user
+    current_time = timezone.now()
     user_profile = Profile.objects.filter(user=user).first()
+    user_profile.last_seen = current_time
+    user_profile.save()
     userprofile = Completeprofile(user_profile)
     workexpdata = workexperience.objects.filter(user=user).all()
     workexp = Workexperienceserialaizer(workexpdata, many=True)
@@ -98,6 +105,12 @@ def userprofile(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def usersaves(request):
+    user = request.user
+    current_time = timezone.now()
+    Profile.objects.update_or_create(
+        user=request.user,
+        defaults={'last_seen': current_time}
+    )
     user = request.user
     jobcards = Jobs.objects.filter(likes__in=[user]).all().order_by('-id')
     jobcard = Jobserializer(jobcards, many=True)
@@ -183,6 +196,12 @@ def unlike_post(request, id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def userjobsdetail(request, id):
+    current_time = timezone.now()
+    Profile.objects.update_or_create(
+        user=request.user,
+        defaults={'last_seen': current_time}
+    )
+    user = request.user
     jobdetails = get_object_or_404(Jobs, id=id)
     jobdetail = Jobserializer(jobdetails)
     jobcard = Jobs.objects.all().exclude(id=jobdetails.id)[:4]
@@ -232,6 +251,12 @@ def keyword(request):
 @login_required
 @api_view(['GET'])
 def usermessagecreate(request, id):
+    current_time = timezone.now()
+    Profile.objects.update_or_create(
+        user=request.user,
+        defaults={'last_seen': current_time}
+    )
+    user = request.user
     myuser = get_object_or_404(User, id=id)
     print(myuser)
     s = shortuuid.ShortUUID(alphabet="0123456789")
@@ -293,6 +318,11 @@ def usermessagecreate(request, id):
 @permission_classes([IsAuthenticated])
 @api_view(['GET', 'POST'])
 def messageportal(request, id):
+    current_time = timezone.now()
+    Profile.objects.update_or_create(
+        user=request.user,
+        defaults={'last_seen': current_time}
+    )
     user = request.user
     # Query messages where the current user is either the sender or receiver
     messages = messagestarter.objects.filter(
@@ -398,6 +428,12 @@ def messageportal(request, id):
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def userjobs(request):
+    current_time = timezone.now()
+    Profile.objects.update_or_create(
+        user=request.user,
+        defaults={'last_seen': current_time}
+    )
+    user = request.user
     jobcard = Jobs.objects.all().order_by('-id')
     jobcardscount = Jobs.objects.all().count()
     jobserialized = Jobserializer(jobcard, many=True)
@@ -539,6 +575,12 @@ def jobprint(request):
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def userjobssinglepage(request, id):
+    current_time = timezone.now()
+    Profile.objects.update_or_create(
+        user=request.user,
+        defaults={'last_seen': current_time}
+    )
+    user = request.user
     jobcard = Jobs.objects.filter(id=id).first()
     jobserialized = Jobserializer(jobcard)
 
