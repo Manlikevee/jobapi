@@ -572,6 +572,8 @@ def jobprint(request):
 
 
 
+
+
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
 def userjobssinglepage(request, id):
