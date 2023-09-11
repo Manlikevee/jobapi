@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.generics import get_object_or_404
@@ -289,7 +290,7 @@ def usermessagecreate(request, id):
 def messageportal(request, id):
     messagetone = get_object_or_404(messagestarter, messageid=id)
     messagetonedata = messagestarterserializer(messagetone)
-    vee = datetime.now()
+    vee = timezone.now()
     if request.method == 'POST':
         myimage = request.data.get('myimg')
         keyword = request.data.get('keyword')
@@ -530,5 +531,8 @@ def userjobssinglepage(request, id):
 def timetest(request):
     vee = datetime.now().date().strftime("%Y-%m-%d %H:%M:%S")
     print(vee)
+    current_datetime = timezone.now()
     veetwo =    datetime.now()
     print(veetwo)
+
+    return HttpResponse(f'{current_datetime}  hello  {veetwo} world')
