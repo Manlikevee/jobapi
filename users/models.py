@@ -205,7 +205,7 @@ class Profile(models.Model):
     profuuid = models.UUIDField(blank=True, max_length=600, null=True)
     profile_status = models.CharField(blank=True, max_length=600, default='pending', choices=ProfileStatus)
     security_lock = models.BooleanField(default=False)
-
+    last_seen = models.DateTimeField(default=now, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.accountnumber:
