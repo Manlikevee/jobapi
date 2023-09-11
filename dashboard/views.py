@@ -40,8 +40,9 @@ def testcases(request):
     return Response(context, status=status.HTTP_200_OK)
 
 
-@permission_classes([IsAuthenticated])
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def jobseekerdashboard(request):
     user = request.user
     # Query messages where the current user is either the sender or receiver
@@ -73,8 +74,9 @@ def jobseekerdashboard(request):
     return Response(context, status=status.HTTP_200_OK)
 
 
-@permission_classes([IsAuthenticated])
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def userprofile(request):
     user = request.user
     user_profile = Profile.objects.filter(user=user).first()
@@ -92,8 +94,9 @@ def userprofile(request):
     return Response(context, status=status.HTTP_200_OK)
 
 
-@permission_classes([IsAuthenticated])
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def usersaves(request):
     user = request.user
     jobcards = Jobs.objects.filter(likes__in=[user]).all().order_by('-id')
@@ -176,8 +179,9 @@ def unlike_post(request, id):
     return JsonResponse({'likes': likes_count})
 
 
-@permission_classes([IsAuthenticated])
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def userjobsdetail(request, id):
     jobdetails = get_object_or_404(Jobs, id=id)
     jobdetail = Jobserializer(jobdetails)
@@ -196,8 +200,9 @@ def userjobsdetail(request, id):
     return Response(context, status=status.HTTP_200_OK)
 
 
-@permission_classes([IsAuthenticated])
+
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def keyword(request):
     userfirstname = request.user.first_name
     userlastname = request.user.first_name
@@ -288,6 +293,15 @@ def usermessagecreate(request, id):
 @permission_classes([IsAuthenticated])
 @api_view(['GET', 'POST'])
 def messageportal(request, id):
+    user = request.user
+    # Query messages where the current user is either the sender or receiver
+    messages = messagestarter.objects.filter(
+        Q(sender=user) | Q(reciever=user)
+    )
+
+    # Query messagefolder model for all message IDs in the selected messages
+    all_messages_folders = messagefolder.objects.filter(messageid__in=messages).all().order_by('-lastupdated')
+    all_messages_folders_serializer = messageserializer(all_messages_folders, many=True)
     messagetone = get_object_or_404(messagestarter, messageid=id)
     messagetonedata = messagestarterserializer(messagetone)
     vee = timezone.now()
@@ -311,7 +325,8 @@ def messageportal(request, id):
 
                 apidata = {
                     'messageserialized': messageserialized.data,
-                    'usersdataserialized': messagetonedata.data
+                    'usersdataserialized': messagetonedata.data,
+                    'allmessages': all_messages_folders_serializer.data
                 }
                 return Response(apidata, status=status.HTTP_200_OK)
             else:
@@ -325,7 +340,8 @@ def messageportal(request, id):
 
                 apidata = {
                     'messageserialized': messageserialized.data,
-                    'usersdataserialized': messagetonedata.data
+                    'usersdataserialized': messagetonedata.data,
+                    'allmessages': all_messages_folders_serializer.data
                 }
 
                 return Response(apidata, status=status.HTTP_200_OK)
@@ -345,7 +361,8 @@ def messageportal(request, id):
 
                 apidata = {
                     'messageserialized': messageserialized.data,
-                    'usersdataserialized': messagetonedata.data
+                    'usersdataserialized': messagetonedata.data,
+                    'allmessages': all_messages_folders_serializer.data
                 }
 
                 return Response(apidata, status=status.HTTP_200_OK)
@@ -360,7 +377,8 @@ def messageportal(request, id):
 
                 apidata = {
                     'messageserialized': messageserialized.data,
-                    'usersdataserialized': messagetonedata.data
+                    'usersdataserialized': messagetonedata.data,
+                    'allmessages': all_messages_folders_serializer.data
                 }
 
                 return Response(apidata, status=status.HTTP_200_OK)
@@ -370,7 +388,8 @@ def messageportal(request, id):
 
     apidata = {
         'messageserialized': messageserialized.data,
-        'usersdataserialized': messagetonedata.data
+        'usersdataserialized': messagetonedata.data,
+        'allmessages': all_messages_folders_serializer.data
     }
 
     return Response(apidata, status=status.HTTP_200_OK)
