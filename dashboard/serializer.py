@@ -37,9 +37,19 @@ class Featuresserializer(serializers.ModelSerializer):
         fields = ['feature']
 
 
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
+
+
+
 class messagestarterserializer(serializers.ModelSerializer):
     sender = Userserializer()
     reciever = Userserializer()
+    sender_profile = ProfileSerializer(source='sender.profile', read_only=True)
+    receiver_profile = ProfileSerializer(source='receiver.profile', read_only=True)
+
 
     class Meta:
         model = messagestarter
