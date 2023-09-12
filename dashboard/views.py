@@ -100,8 +100,6 @@ def userprofile(request):
     }
     return Response(context, status=status.HTTP_200_OK)
 
-
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def usersaves(request):
@@ -111,18 +109,17 @@ def usersaves(request):
         user=request.user,
         defaults={'last_seen': current_time}
     )
-    user = request.user
     jobcards = Jobs.objects.filter(likes__in=[user]).all().order_by('-id')
     jobcard = Jobserializer(jobcards, many=True)
-    jobcardscount = Jobs.objects.filter(likes__in=[user]).all().count
 
     context = {
         'jobcard': jobcard.data,
-        'jobcardscount': jobcardscount,
     }
 
 
     return Response(context, status=status.HTTP_200_OK)
+
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
