@@ -83,6 +83,7 @@ def jobseekerdashboard(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def userprofile(request):
+    user = request.user
     current_time = timezone.now()
     user_profile = Profile.objects.filter(user=user).first()
     user_profile.last_seen = current_time
