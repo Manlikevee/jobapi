@@ -16,6 +16,7 @@ urlpatterns = [
     path('userprofile', userprofile, name='userprofile' ),
     path('usersaves/', usersaves, name='usersaves'),
     path('like_post/', like_post, name='like_post'),
+    path('savedlike_post/', savedlike_post, name='savedlike_post'),
     path('unlike_post/', unlike_post, name='unlike_post'),
     path('userjobsdetail/', userjobsdetail, name='userjobsdetail'),
     path('keyword/', keyword, name='keyword'),

@@ -121,6 +121,58 @@ def usersaves(request):
     return Response(context, status=status.HTTP_200_OK)
 
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def savedlike_post(request):
+    if request.method == 'POST':
+        # Get the post ID from the POST data
+        post_id = request.data.get('post_id')
+
+        # Retrieve the post object from the database
+        try:
+            post = Jobs.objects.get(id=post_id)
+        except Jobs.DoesNotExist:
+            return JsonResponse({'saved': False, 'message': 'Post not found'})
+
+        # Check if the post is already saved by the current user
+        if post.likes.filter(id=request.user.id).exists():
+            # If yes, remove the current user from the post's saved_by ManyToMany field
+            post.likes.remove(request.user)
+            saved = False
+            message = 'Post unsaved successfully'
+            user = request.user
+            jobcards = Jobs.objects.filter(likes__in=[user]).all().order_by('-id')
+            jobcard = Jobserializer(jobcards, many=True)
+
+            context = {
+                'jobcards': jobcard.data,
+                'saved': saved,
+                'message': message
+            }
+
+            return Response(context, status=status.HTTP_200_OK)
+        else:
+            # If no, add the current user to the post's saved_by ManyToMany field
+            post.likes.add(request.user)
+            saved = True
+            message = 'Post saved successfully'
+            user = request.user
+            jobcards = Jobs.objects.filter(likes__in=[user]).all().order_by('-id')
+            jobcard = Jobserializer(jobcards, many=True)
+
+            context = {
+                'jobcards': jobcard.data,
+                'saved': saved,
+                'message': message
+            }
+
+
+            return Response(context, status=status.HTTP_200_OK)
+
+    # Return an error response for unsupported methods
+    return JsonResponse({'saved': False, 'message': 'Invalid request method'})
+
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -169,6 +221,8 @@ def like_post(request):
 
     # Return an error response for unsupported methods
     return JsonResponse({'saved': False, 'message': 'Invalid request method'})
+
+
 
 
 def like_blog(request):
