@@ -114,7 +114,7 @@ def usersaves(request):
     jobcard = Jobserializer(jobcards, many=True)
 
     context = {
-        'jobcard': jobcard.data,
+        'jobcards': jobcard.data,
     }
 
 
