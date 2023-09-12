@@ -21,7 +21,13 @@ class Workexperienceserializer(serializers.ModelSerializer):
         model = workexperience
         fields = '__all__'
 
+class Universitydata(serializers.ModelSerializer):
+    class Meta:
+        model = exceltest
+        fields = '__all__'
+
 class Educationserializer(serializers.ModelSerializer):
+    university = Universitydata()
     class Meta:
         model = University
         fields = '__all__'
