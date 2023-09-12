@@ -671,3 +671,40 @@ def timetest(request):
     print(veetwo)
 
     return HttpResponse(f'{current_datetime}  hello  {veetwo} world')
+
+
+
+
+
+@permission_classes([IsAuthenticated])
+@api_view(['POST'])
+def user_job_application_page(request, id):
+    try:
+        jb = Jobs.objects.get(id=id)
+    except Jobs.DoesNotExist:
+        return JsonResponse({'saved': False, 'message': 'Job not found'})
+
+    work_exp = workexperience.objects.filter(user=request.user).all()
+    edu = University.objects.filter(user=request.user).all()
+
+    if request.method == 'POST':
+        post_id = request.POST.get('post_id')
+        try:
+            post = Jobs.objects.get(id=post_id)
+        except Jobs.DoesNotExist:
+            return JsonResponse({'saved': False, 'message': 'Job not found'})
+
+        my_jb = Jobserializer(jb)
+        my_work_exp = Workexperienceserializer(work_exp, many=True)
+        my_edu = Educationserializer(edu, many=True)
+
+        context = {
+            'job_detail': my_jb.data,
+            'education_detail': my_edu.data,
+            'work_experience': my_work_exp.data
+        }
+
+        return Response(context, status=status.HTTP_200_OK)
+
+    # Return an error response for unsupported methods
+    return JsonResponse({'saved': False, 'message': 'Invalid request method'})

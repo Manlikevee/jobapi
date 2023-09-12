@@ -15,7 +15,6 @@ urlpatterns = [
     path('userdashboarddata', jobseekerdashboard, name='jobseekerdashboard' ),
     path('userprofile', userprofile, name='userprofile' ),
     path('usersaves/', usersaves, name='usersaves'),
-
     path('like_post/', like_post, name='like_post'),
     path('savedlike_post/', savedlike_post, name='savedlike_post'),
     path('unlike_post/', unlike_post, name='unlike_post'),
@@ -29,7 +28,7 @@ urlpatterns = [
     path('jobprint/', jobprint, name='jobprint'),
     path('userjobssinglepage/<int:id>/', userjobssinglepage, name='userjobssinglepage'),
     path('timetest', timetest, name='timetest'),
-
+    path('userjobapplicationpage/<int:id>', user_job_application_page, name="userjobapplicationpage"),
 
 
 ]

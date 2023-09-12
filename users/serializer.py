@@ -16,6 +16,15 @@ class Completeprofile(serializers.ModelSerializer):
         model = Profile
         fields = '__all__'  # Or specify the fields you want to expose
 
+class Workexperienceserializer(serializers.ModelSerializer):
+    class Meta:
+        model = workexperience
+        fields = '__all__'
+
+class Educationserializer(serializers.ModelSerializer):
+    class Meta:
+        model = University
+        fields = '__all__'
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     accountnumber = serializers.CharField(source='profile.accountnumber', read_only=True)
