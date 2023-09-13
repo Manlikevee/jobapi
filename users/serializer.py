@@ -45,7 +45,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 class postingserializer(serializers.ModelSerializer):
     user = Userserializer()
-    user_profile = ProfileSerializer(source='sender.profile', read_only=True)
+    user_profile = ProfileSerializer(source='user.profile', read_only=True)
     class Meta:
         model = postings
         fields = '__all__'
