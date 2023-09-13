@@ -667,10 +667,10 @@ class postings(models.Model):
     message = models.TextField(blank=True, null=True)
     likes = models.ManyToManyField(User, related_name='post_like')
     testj = models.JSONField(blank=True, null=True, default=list)
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     def __str__(self):
-        return self.sender.user
+        return self.user.username
 
 
 class PaymentDetails(models.Model):
@@ -719,7 +719,7 @@ class Status(models.Model):
 class Userplan(models.Model):
     planname = models.CharField(max_length=100, default='BASIC PLAN', null=True)
     Planprice = models.BigIntegerField(default=0, null=True)
-
+    plandescription = models.CharField(max_length=100, default='BASIC PLAN', null=True)
     def __str__(self):
         return self.planname
 

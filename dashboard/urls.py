@@ -29,8 +29,8 @@ urlpatterns = [
     path('userjobssinglepage/<int:id>/', userjobssinglepage, name='userjobssinglepage'),
     path('timetest', timetest, name='timetest'),
     path('userjobapplicationpage/<int:id>', user_job_application_page, name="userjobapplicationpage"),
-
-
+    path('newtimelinepost', extract_hashtags, name="ExtractHashtagsView"),
+    path('Timeline', Timeline, name="Timeline"),
 ]
 
 

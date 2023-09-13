@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
@@ -10,6 +11,8 @@ from rest_framework.decorators import permission_classes, api_view
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .serializer import *
 from users.models import *
 from users.serializer import *
@@ -707,3 +710,45 @@ def user_job_application_page(request, id):
 
     # Return an error response for unsupported methods
     return JsonResponse({'saved': False, 'message': 'Invalid request method'})
+
+
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def extract_hashtags(request, format=None):
+    text = request.data.get('text', '')  # Get the text from the POST request data
+    hashtags_with_symbol = re.findall(r'#\w+', text)  # Find words starting with #hashtags
+    hashtags_without_symbol = [tag[1:] for tag in hashtags_with_symbol]  # Remove the # symbol
+
+    s = shortuuid.ShortUUID(alphabet="0123456789")
+    otp = s.random(length=15)
+
+    # Create an instance of your model
+    user = request.user
+    your_model_instance = postings(message=text, messageid=otp, user=user)
+    your_model_instance.save()
+
+    # Add the hashtags as tags to the model instance
+    your_model_instance.tags.add(*hashtags_without_symbol)
+
+    serializer = postingserializer(your_model_instance)
+    return Response({'message': 'Data saved', 'data': serializer.data})
+
+
+# @permission_classes([IsAuthenticated])
+@api_view(['GET'])
+def Timeline(request):
+    # current_time = timezone.now()
+    # Profile.objects.update_or_create(
+    #     user=request.user,
+    #     defaults={'last_seen': current_time}
+    # )
+    user = request.user
+    allposts = postings.objects.all().order_by('-id')
+    postserializer = postingserializer(allposts, many=True)
+
+    context = {
+        'allposts': postserializer.data,
+    }
+    return Response(context, status=status.HTTP_200_OK)

@@ -39,3 +39,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'email', 'password', 'accountnumber']
         extra_kwargs = {'password': {'write_only': True}}
+
+
+class postingserializer(serializers.ModelSerializer):
+    class Meta:
+        model = postings
+        fields = '__all__'

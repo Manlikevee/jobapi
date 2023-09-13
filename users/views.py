@@ -18,7 +18,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from dashboard.serializer import Imagetest
+# from dashboard.serializer import Imagetest
 # Create your views here.
 from .models import Profile
 from .serializer import *
