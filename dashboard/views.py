@@ -766,6 +766,7 @@ def Timeline(request):
     all_records_except_current_user = Profile.objects.all().exclude(user=myprofile).order_by('?')[:2]
 
 
+
     # Serialize the shuffled queryset using the Userserializer
     profileserializer = ProfileSerializer(all_records_except_current_user, many=True)
     json_data_lists = []
