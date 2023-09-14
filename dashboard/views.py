@@ -790,6 +790,7 @@ class CommonTagAPIView(APIView):
             # Append the dictionary to the list
             json_data_lists.append(datas)
 
+
         context = {
             # 'allposts': postserializer.data,
             'tagdata' : json_data_lists
