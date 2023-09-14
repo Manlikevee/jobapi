@@ -746,24 +746,22 @@ def extract_hashtags(request, format=None):
         serializer = postingserializer(your_model_instance)
         return Response({'message': 'Data saved', 'data': serializer.data})
 
-
-# @permission_classes([IsAuthenticated])
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
+
 def Timeline(request):
-    # current_time = timezone.now()
-    # Profile.objects.update_or_create(
-    #     user=request.user,
-    #     defaults={'last_seen': current_time}
-    # )
+    current_time = timezone.now()
+    Profile.objects.update_or_create(
+        user=request.user,
+        defaults={'last_seen': current_time}
+    )
     user = request.user
     allposts = postings.objects.all().order_by('-id')
     postserializer = postingserializer(allposts, many=True)
     queryset2 = postings.tags.most_common()[:4]
-    current_user_id = request.user.id
-    myprofile = Profile.objects.filter(user=request.user).first()
 
     # Exclude the current user by ID
-    all_records_except_current_user = Profile.objects.all().exclude(user=myprofile).order_by('?')[:2]
+    all_records_except_current_user = Profile.objects.all().exclude(user=request.user).order_by('?')[:2]
 
 
 
@@ -791,6 +789,13 @@ class CommonTagAPIView(APIView):
         # Query the common tags
         # allposts = postings.objects.all().order_by('-id')
         # postserializer = tagspostingserializer(allposts, many=True)
+        myuser = User.objects.filter(id=11).first()
+
+        # Exclude the current user by ID
+        all_records_except_current_user = Profile.objects.all().exclude(user=myuser).order_by('?')[:2]
+
+        # Serialize the shuffled queryset using the Userserializer
+        profileserializer = ProfileSerializer(all_records_except_current_user, many=True)
         queryset2 = postings.tags.most_common()[:4]
         json_data_lists = []
         common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
@@ -804,6 +809,7 @@ class CommonTagAPIView(APIView):
 
         context = {
             # 'allposts': postserializer.data,
-            'tagdata' : json_data_lists
+            'tagdata' : json_data_lists,
+            'all_records_except_current_user': profileserializer.data
         }
         return Response(context, status=status.HTTP_200_OK)
