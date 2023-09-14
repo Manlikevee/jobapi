@@ -759,6 +759,18 @@ def Timeline(request):
     allposts = postings.objects.all().order_by('-id')
     postserializer = postingserializer(allposts, many=True)
     queryset2 = postings.tags.most_common()[:4]
+    current_user_id = request.user.id
+    myprofile = Profile.objects.filter(user=request.user).first()
+
+    # Exclude the current user by ID
+    all_records_except_current_user = Profile.objects.exclude(user=myprofile)[:2]
+
+    # Shuffle the queryset
+    random_records = list(all_records_except_current_user)
+    random.shuffle(random_records)
+
+    # Serialize the shuffled queryset using the Userserializer
+    profileserializer = ProfileSerializer(random_records, many=True)
     json_data_lists = []
     common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
     for a in common_tags:
@@ -770,7 +782,8 @@ def Timeline(request):
 
     context = {
         'allposts': postserializer.data,
-        'trending' : json_data_lists
+        'trending' : json_data_lists,
+        'profileserializer': profileserializer
     }
     return Response(context, status=status.HTTP_200_OK)
 

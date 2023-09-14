@@ -40,6 +40,7 @@ class Featuresserializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    user = Userserializer()
     class Meta:
         model = Profile
         fields = '__all__'
