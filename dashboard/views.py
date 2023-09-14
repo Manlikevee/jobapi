@@ -763,14 +763,11 @@ def Timeline(request):
     myprofile = Profile.objects.filter(user=request.user).first()
 
     # Exclude the current user by ID
-    all_records_except_current_user = Profile.objects.exclude(user=myprofile)[:2]
+    all_records_except_current_user = Profile.objects.all().exclude(user=myprofile).order_by('?')[:2]
 
-    # Shuffle the queryset
-    random_records = list(all_records_except_current_user)
-    random.shuffle(random_records)
 
     # Serialize the shuffled queryset using the Userserializer
-    profileserializer = ProfileSerializer(random_records, many=True)
+    profileserializer = ProfileSerializer(all_records_except_current_user, many=True)
     json_data_lists = []
     common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
     for a in common_tags:
