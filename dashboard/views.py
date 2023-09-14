@@ -727,25 +727,14 @@ def extract_hashtags(request, format=None):
 
     # Create an instance of your model
     user = request.user
-    if image:
-        print('hello world')
-        your_model_instance = postings(message=text, messageid=otp, user=user,image=image )
-        your_model_instance.save()
-        # Add the hashtags as tags to the model instance
-        your_model_instance.tags.add(*hashtags_without_symbol)
-        serializer = postingserializer(your_model_instance)
-        return Response({'message': 'Data saved', 'data': serializer.data})
-    else:
+    your_model_instance = postings(message=text, messageid=otp, user=user, image=image if image else None)
+    your_model_instance.save()
 
-        your_model_instance = postings(message=text, messageid=otp, user=user)
-        your_model_instance.save()
+    # Add the hashtags as tags to the model instance
+    your_model_instance.tags.add(*hashtags_without_symbol)
 
-        # Add the hashtags as tags to the model instance
-        your_model_instance.tags.add(*hashtags_without_symbol)
-
-        serializer = postingserializer(your_model_instance)
-        return Response({'message': 'Data saved', 'data': serializer.data})
-
+    serializer = postingserializer(your_model_instance)
+    return Response({'message': 'Data saved', 'data': serializer.data})
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 
