@@ -1,8 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-
-from dashboard.serializer import ProfileSerializer
 from .models import *
 
 class Userserializer(serializers.ModelSerializer):
@@ -43,9 +41,3 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
 
-class postingserializer(serializers.ModelSerializer):
-    user = Userserializer()
-    user_profile = ProfileSerializer(source='user.profile', read_only=True)
-    class Meta:
-        model = postings
-        fields = '__all__'

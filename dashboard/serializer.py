@@ -67,3 +67,11 @@ class Imagetest(serializers.ModelSerializer):
     class Meta:
         model = UploadedImage
         fields = ['image']
+
+
+class postingserializer(serializers.ModelSerializer):
+    user = Userserializer()
+    sender_profile = ProfileSerializer(source='user.profile', read_only=True)
+    class Meta:
+        model = postings
+        fields = '__all__'
