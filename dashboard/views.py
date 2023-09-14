@@ -734,7 +734,27 @@ def extract_hashtags(request, format=None):
     your_model_instance.tags.add(*hashtags_without_symbol)
 
     serializer = postingserializer(your_model_instance)
-    return Response({'message': 'Data saved', 'data': serializer.data})
+
+    allposts = postings.objects.all().order_by('-id')
+    postserializer = postingserializer(allposts, many=True)
+    json_data_lists = []
+    queryset2 = postings.tags.most_common()[:4]
+    common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
+    for a in common_tags:
+        # Construct a dictionary with the desired data
+        datas = {"name": a.slug, "number": a.num_times}  # Replace with your data
+
+        # Append the dictionary to the list
+        json_data_lists.append(datas)
+
+
+
+    context = {
+        'allposts': postserializer.data,
+        'trending' : json_data_lists,
+    }
+    return Response(context, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 
