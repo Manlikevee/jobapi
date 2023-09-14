@@ -808,7 +808,7 @@ class CommonTagAPIView(APIView):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def savedtimelinepost(request):
     allposts = postings.objects.all().order_by('-id')
     postserializer = postingserializer(allposts, many=True)
@@ -821,7 +821,7 @@ def savedtimelinepost(request):
 
         # Append the dictionary to the list
         json_data_lists.append(datas)
-
+        myuser = request.user
     if request.method == 'POST':
         # Get the post ID from the POST data
         post_id = request.data.get('post_id')
@@ -833,9 +833,9 @@ def savedtimelinepost(request):
             return JsonResponse({'saved': False, 'message': 'Post not found'})
 
         # Check if the post is already saved by the current user
-        if postings.likes.filter(id=request.user.id).exists():
+        if post.likes.filter(id=myuser.id).exists():
             # If yes, remove the current user from the post's saved_by ManyToMany field
-            post.likes.remove(request.user)
+            post.likes.remove(myuser)
             saved = False
             message = 'Post unliked'
 
@@ -849,10 +849,10 @@ def savedtimelinepost(request):
             return Response(context, status=status.HTTP_200_OK)
         else:
             # If no, add the current user to the post's saved_by ManyToMany field
-            post.likes.add(request.user)
+            post.likes.add(myuser)
             saved = True
             message = 'Post liked'
-            user = request.user
+            user = myuser
             context = {
                 'allposts': postserializer.data,
                 'saved': saved,
