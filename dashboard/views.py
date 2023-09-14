@@ -780,7 +780,7 @@ def Timeline(request):
     context = {
         'allposts': postserializer.data,
         'trending' : json_data_lists,
-        'profileserializer': profileserializer
+        'profileserializer': profileserializer.data
     }
     return Response(context, status=status.HTTP_200_OK)
 
