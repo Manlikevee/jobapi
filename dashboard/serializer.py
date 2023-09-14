@@ -3,6 +3,8 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from users.models import *
 from users.serializer import Userserializer
+from taggit.serializers import (TagListSerializerField,
+                                TaggitSerializer)
 
 
 class Jobserializer(serializers.ModelSerializer):
@@ -43,7 +45,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class messagestarterserializer(serializers.ModelSerializer):
     sender = Userserializer()
     reciever = Userserializer()
@@ -72,6 +73,17 @@ class Imagetest(serializers.ModelSerializer):
 class postingserializer(serializers.ModelSerializer):
     user = Userserializer()
     sender_profile = ProfileSerializer(source='user.profile', read_only=True)
+
+    class Meta:
+        model = postings
+        fields = '__all__'
+
+
+class tagspostingserializer(TaggitSerializer, serializers.ModelSerializer):
+    user = Userserializer()
+    tags = TagListSerializerField()
+    sender_profile = ProfileSerializer(source='user.profile', read_only=True)
+
     class Meta:
         model = postings
         fields = '__all__'

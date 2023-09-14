@@ -18,6 +18,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from dashboard.serializer import Imagetest
 # from dashboard.serializer import Imagetest
 # Create your views here.
 from .models import Profile
@@ -179,3 +180,7 @@ def upload_image(request):
             return Response(status=status.HTTP_400_BAD_REQUEST)  # Return errors if the serializer is not valid
     else:
         return Response("Method not allowed", status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+
+

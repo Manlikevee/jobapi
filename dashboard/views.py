@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
@@ -718,6 +718,7 @@ def user_job_application_page(request, id):
 @permission_classes([IsAuthenticated])
 def extract_hashtags(request, format=None):
     text = request.data.get('text', '')  # Get the text from the POST request data
+    image = request.data.get('myimg')
     hashtags_with_symbol = re.findall(r'#\w+', text)  # Find words starting with #hashtags
     hashtags_without_symbol = [tag[1:] for tag in hashtags_with_symbol]  # Remove the # symbol
 
@@ -726,14 +727,24 @@ def extract_hashtags(request, format=None):
 
     # Create an instance of your model
     user = request.user
-    your_model_instance = postings(message=text, messageid=otp, user=user)
-    your_model_instance.save()
+    if image:
+        print('hello world')
+        your_model_instance = postings(message=text, messageid=otp, user=user,image=image )
+        your_model_instance.save()
+        # Add the hashtags as tags to the model instance
+        your_model_instance.tags.add(*hashtags_without_symbol)
+        serializer = postingserializer(your_model_instance)
+        return Response({'message': 'Data saved', 'data': serializer.data})
+    else:
 
-    # Add the hashtags as tags to the model instance
-    your_model_instance.tags.add(*hashtags_without_symbol)
+        your_model_instance = postings(message=text, messageid=otp, user=user)
+        your_model_instance.save()
 
-    serializer = postingserializer(your_model_instance)
-    return Response({'message': 'Data saved', 'data': serializer.data})
+        # Add the hashtags as tags to the model instance
+        your_model_instance.tags.add(*hashtags_without_symbol)
+
+        serializer = postingserializer(your_model_instance)
+        return Response({'message': 'Data saved', 'data': serializer.data})
 
 
 # @permission_classes([IsAuthenticated])
@@ -747,8 +758,40 @@ def Timeline(request):
     user = request.user
     allposts = postings.objects.all().order_by('-id')
     postserializer = postingserializer(allposts, many=True)
+    queryset2 = postings.tags.most_common()[:4]
+    json_data_lists = []
+    common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
+    for a in common_tags:
+        # Construct a dictionary with the desired data
+        datas = {"name": a.slug, "number": a.num_times}  # Replace with your data
+
+        # Append the dictionary to the list
+        json_data_lists.append(datas)
 
     context = {
         'allposts': postserializer.data,
+        'trending' : json_data_lists
     }
     return Response(context, status=status.HTTP_200_OK)
+
+from django.core import serializers
+class CommonTagAPIView(APIView):
+    def get(self, request):
+        # Query the common tags
+        # allposts = postings.objects.all().order_by('-id')
+        # postserializer = tagspostingserializer(allposts, many=True)
+        queryset2 = postings.tags.most_common()[:4]
+        json_data_lists = []
+        common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
+        for a in common_tags:
+            # Construct a dictionary with the desired data
+            datas = {"name": a.slug, "number": a.num_times}  # Replace with your data
+
+            # Append the dictionary to the list
+            json_data_lists.append(datas)
+
+        context = {
+            # 'allposts': postserializer.data,
+            'tagdata' : json_data_lists
+        }
+        return Response(context, status=status.HTTP_200_OK)
