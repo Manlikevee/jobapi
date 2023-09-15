@@ -890,6 +890,7 @@ def newcomment(request, id):
 
     a = get_object_or_404(postings, messageid=id)
 
+
     if request.method == 'POST':
         myimage = request.data.get('myimg')
         keyword = request.data.get('keyword')
