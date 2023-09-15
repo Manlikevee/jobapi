@@ -878,6 +878,7 @@ def newcomment(request, id):
     common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
     s = shortuuid.ShortUUID(alphabet="0123456789")
     otp = s.random(length=15)
+
     for a in common_tags:
         # Construct a dictionary with the desired data
         datas = {"name": a.slug, "number": a.num_times}  # Replace with your data
