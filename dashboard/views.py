@@ -808,7 +808,7 @@ class CommonTagAPIView(APIView):
 
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def savedtimelinepost(request):
     allposts = postings.objects.all().order_by('-id')
     postserializer = postingserializer(allposts, many=True)
@@ -867,7 +867,8 @@ def savedtimelinepost(request):
 
 
 
-
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 @login_required
 def newcomment(request, id):
     allposts = postings.objects.all().order_by('-id')
