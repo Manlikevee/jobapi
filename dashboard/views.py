@@ -864,3 +864,69 @@ def savedtimelinepost(request):
 
     # Return an error response for unsupported methods
     return JsonResponse({'saved': False, 'message': 'Invalid request method'})
+
+
+
+
+@login_required
+def newcomment(request, id):
+    allposts = postings.objects.all().order_by('-id')
+    postserializer = postingserializer(allposts, many=True)
+    json_data_lists = []
+    queryset2 = postings.tags.most_common()[:4]
+    common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
+    s = shortuuid.ShortUUID(alphabet="0123456789")
+    otp = s.random(length=15)
+    for a in common_tags:
+        # Construct a dictionary with the desired data
+        datas = {"name": a.slug, "number": a.num_times}  # Replace with your data
+
+        # Append the dictionary to the list
+        json_data_lists.append(datas)
+
+    quizdata = []
+    ves = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    a = get_object_or_404(postings, messageid=id)
+
+    if request.method == 'POST':
+        myimage = request.data.get('myimg')
+        keyword = request.data.get('keyword')
+        print(keyword)
+        if myimage:
+            serializer = UploadedImage.objects.create(image=myimage)
+            serializer.save()
+            serializeddata = Imagetest(serializer)
+            dest12 = {"sender": f"{request.user.username}", "senderid": f"{request.user.id}", "commentid": f"{otp}",
+                          "messagetime": f"{ves}", "message": f"{keyword}"}
+
+            a.testj.append(dest12)
+            a.save()
+
+            apidata = {
+                    'message': 'Comment Added Successfully',
+                    'allposts': postserializer.data,
+                    'trending': json_data_lists,
+                }
+            return Response(apidata, status=status.HTTP_200_OK)
+
+        else:
+            dest12 = {"sender": f"{request.user.username}", "senderid": f"{request.user.id}", "commentid": f"{id}",
+                      "messagetime": f"{ves}", "message": f"{keyword}"}
+            # jsondata = get_object_or_404(postings, messageid=id)
+            a.testj.append(dest12)
+            a.save()
+
+            apidata = {
+                'message': 'Comment Added Successfully',
+                'allposts': postserializer.data,
+                'trending': json_data_lists,
+            }
+
+            return Response(apidata, status=status.HTTP_200_OK)
+
+    return Response({'message': 'We Are Unable To Process Your Request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+

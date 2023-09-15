@@ -21,6 +21,7 @@ urlpatterns = [
     path('unlike_post/', unlike_post, name='unlike_post'),
     path('userjobsdetail/', userjobsdetail, name='userjobsdetail'),
     path('keyword/', keyword, name='keyword'),
+    path('newcomment/<int:id>/', newcomment, name='newcomment'),
     path('messageportal/<int:id>/', messageportal, name='messageportal'),
     path('usermessagecreate/<int:id>', usermessagecreate, name='usermessagecreate'),
     path('userjobs', userjobs, name='userjobs'),
