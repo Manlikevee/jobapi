@@ -869,7 +869,6 @@ def savedtimelinepost(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-@login_required
 def newcomment(request, id):
     allposts = postings.objects.all().order_by('-id')
     postserializer = postingserializer(allposts, many=True)
