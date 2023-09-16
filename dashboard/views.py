@@ -810,20 +810,8 @@ class CommonTagAPIView(APIView):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def savedtimelinepost(request):
-    allposts = postings.objects.all().order_by('-id')
-    postserializer = postingserializer(allposts, many=True)
-    queryset2 = postings.tags.most_common()[:4]
 
-
-    json_data_lists = []
-    common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
-    for a in common_tags:
-        # Construct a dictionary with the desired data
-        datas = {"name": a.slug, "number": a.num_times}  # Replace with your data
-
-        # Append the dictionary to the list
-        json_data_lists.append(datas)
-        myuser = request.user
+    myuser = request.user
     if request.method == 'POST':
         # Get the post ID from the POST data
         post_id = request.data.get('post_id')
@@ -840,8 +828,19 @@ def savedtimelinepost(request):
             post.likes.remove(myuser)
             saved = False
             message = 'Post unliked'
-            post = postings.objects.filter(messageid=id).first()
+            post = postings.objects.filter(messageid=post_id).first()
             postserialized = postingserializer(post)
+            allposts = postings.objects.all().order_by('-id')
+            postserializer = postingserializer(allposts, many=True)
+            queryset2 = postings.tags.most_common()[:4]
+            json_data_lists = []
+            common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
+            for a in common_tags:
+                # Construct a dictionary with the desired data
+                datas = {"name": a.slug, "number": a.num_times}  # Replace with your data
+
+                # Append the dictionary to the list
+                json_data_lists.append(datas)
             context = {
                 'allposts': postserializer.data,
                 'saved': saved,
@@ -857,8 +856,19 @@ def savedtimelinepost(request):
             saved = True
             message = 'Post liked'
             user = myuser
-            post = postings.objects.filter(messageid=id).first()
+            post = postings.objects.filter(messageid=post_id).first()
             postserialized = postingserializer(post)
+            allposts = postings.objects.all().order_by('-id')
+            postserializer = postingserializer(allposts, many=True)
+            queryset2 = postings.tags.most_common()[:4]
+            json_data_lists = []
+            common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
+            for a in common_tags:
+                # Construct a dictionary with the desired data
+                datas = {"name": a.slug, "number": a.num_times}  # Replace with your data
+
+                # Append the dictionary to the list
+                json_data_lists.append(datas)
             context = {
                 'allposts': postserializer.data,
                 'saved': saved,
