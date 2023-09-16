@@ -831,7 +831,7 @@ def savedtimelinepost(request):
 
         # Retrieve the post object from the database
         try:
-            post = postings.objects.get(id=post_id)
+            post = postings.objects.get(messageid=post_id)
         except postings.DoesNotExist:
             return JsonResponse({'saved': False, 'message': 'Post not found'})
 
