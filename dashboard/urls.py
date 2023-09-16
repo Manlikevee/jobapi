@@ -34,6 +34,7 @@ urlpatterns = [
     path('newtimelinepost', extract_hashtags, name="ExtractHashtagsView"),
     path('Timeline', Timeline, name="Timeline"),
     path('CommonTagAPIView', CommonTagAPIView.as_view(), name="CommonTagAPIView"),
+    path('postingsinglepage/<int:id>', postingsinglepage, name="postingsinglepage"),
 
 ]
 

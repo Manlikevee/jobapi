@@ -890,7 +890,6 @@ def newcomment(request, id):
 
     a = get_object_or_404(postings, messageid=id)
 
-
     if request.method == 'POST':
         myimage = request.data.get('myimg')
         keyword = request.data.get('keyword')
@@ -932,3 +931,24 @@ def newcomment(request, id):
 
 
 
+@permission_classes([IsAuthenticated])
+@api_view(['GET'])
+def postingsinglepage(request, id):
+    # current_time = timezone.now()
+    # Profile.objects.update_or_create(
+    #     user=request.user,
+    #     defaults={'last_seen': current_time}
+    # )
+    # user = request.user
+    post = postings.objects.filter(messageid=id).first()
+    if post:
+        postserialized = postingserializer(post)
+
+        context = {
+            'mypost': postserialized.data,
+        }
+        return Response(context, status=status.HTTP_200_OK)
+    else:
+        return Response({'message': 'We Are Unable To Process Your Request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({'message': 'We Are Unable To Process Your Request'}, status=status.HTTP_400_BAD_REQUEST)
