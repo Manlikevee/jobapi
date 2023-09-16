@@ -813,8 +813,7 @@ def savedtimelinepost(request):
     allposts = postings.objects.all().order_by('-id')
     postserializer = postingserializer(allposts, many=True)
     queryset2 = postings.tags.most_common()[:4]
-    post = postings.objects.filter(messageid=id).first()
-    postserialized = postingserializer(post)
+
 
     json_data_lists = []
     common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
@@ -841,7 +840,8 @@ def savedtimelinepost(request):
             post.likes.remove(myuser)
             saved = False
             message = 'Post unliked'
-
+            post = postings.objects.filter(messageid=id).first()
+            postserialized = postingserializer(post)
             context = {
                 'allposts': postserializer.data,
                 'saved': saved,
@@ -857,6 +857,8 @@ def savedtimelinepost(request):
             saved = True
             message = 'Post liked'
             user = myuser
+            post = postings.objects.filter(messageid=id).first()
+            postserialized = postingserializer(post)
             context = {
                 'allposts': postserializer.data,
                 'saved': saved,
@@ -895,8 +897,7 @@ def newcomment(request, id):
     ves = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     a = get_object_or_404(postings, messageid=id)
-    post = postings.objects.filter(messageid=id).first()
-    postserialized = postingserializer(post)
+
 
 
     if request.method == 'POST':
@@ -912,7 +913,8 @@ def newcomment(request, id):
 
             a.testj.append(dest12)
             a.save()
-
+            post = postings.objects.filter(messageid=id).first()
+            postserialized = postingserializer(post)
             apidata = {
                     'message': 'Comment Added Successfully',
                     'allposts': postserializer.data,
@@ -927,7 +929,8 @@ def newcomment(request, id):
             # jsondata = get_object_or_404(postings, messageid=id)
             a.testj.append(dest12)
             a.save()
-
+            post = postings.objects.filter(messageid=id).first()
+            postserialized = postingserializer(post)
             apidata = {
                 'message': 'Comment Added Successfully',
                 'allposts': postserializer.data,
