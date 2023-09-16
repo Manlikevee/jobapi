@@ -813,6 +813,9 @@ def savedtimelinepost(request):
     allposts = postings.objects.all().order_by('-id')
     postserializer = postingserializer(allposts, many=True)
     queryset2 = postings.tags.most_common()[:4]
+    post = postings.objects.filter(messageid=id).first()
+    postserialized = postingserializer(post)
+
     json_data_lists = []
     common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
     for a in common_tags:
@@ -844,6 +847,7 @@ def savedtimelinepost(request):
                 'saved': saved,
                 'message': message,
                 'tagdata': json_data_lists,
+                'mypost': postserialized.data,
             }
 
             return Response(context, status=status.HTTP_200_OK)
@@ -858,6 +862,7 @@ def savedtimelinepost(request):
                 'saved': saved,
                 'message': message,
                 'tagdata': json_data_lists,
+                'mypost': postserialized.data,
             }
 
             return Response(context, status=status.HTTP_200_OK)
@@ -872,6 +877,7 @@ def savedtimelinepost(request):
 def newcomment(request, id):
     allposts = postings.objects.all().order_by('-id')
     postserializer = postingserializer(allposts, many=True)
+
     json_data_lists = []
     queryset2 = postings.tags.most_common()[:4]
     common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
@@ -889,6 +895,9 @@ def newcomment(request, id):
     ves = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     a = get_object_or_404(postings, messageid=id)
+    post = postings.objects.filter(messageid=id).first()
+    postserialized = postingserializer(post)
+
 
     if request.method == 'POST':
         myimage = request.data.get('myimg')
@@ -908,6 +917,7 @@ def newcomment(request, id):
                     'message': 'Comment Added Successfully',
                     'allposts': postserializer.data,
                     'trending': json_data_lists,
+                'mypost': postserialized.data,
                 }
             return Response(apidata, status=status.HTTP_200_OK)
 
@@ -922,6 +932,7 @@ def newcomment(request, id):
                 'message': 'Comment Added Successfully',
                 'allposts': postserializer.data,
                 'trending': json_data_lists,
+                'mypost': postserialized.data,
             }
 
             return Response(apidata, status=status.HTTP_200_OK)
@@ -931,15 +942,16 @@ def newcomment(request, id):
 
 
 
-@permission_classes([IsAuthenticated])
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def postingsinglepage(request, id):
-    # current_time = timezone.now()
-    # Profile.objects.update_or_create(
-    #     user=request.user,
-    #     defaults={'last_seen': current_time}
-    # )
-    # user = request.user
+    current_time = timezone.now()
+    Profile.objects.update_or_create(
+        user=request.user,
+        defaults={'last_seen': current_time}
+    )
+    user = request.user
     post = postings.objects.filter(messageid=id).first()
     if post:
         postserialized = postingserializer(post)
@@ -951,4 +963,4 @@ def postingsinglepage(request, id):
     else:
         return Response({'message': 'We Are Unable To Process Your Request'}, status=status.HTTP_400_BAD_REQUEST)
 
-    return Response({'message': 'We Are Unable To Process Your Request'}, status=status.HTTP_400_BAD_REQUEST)
+
