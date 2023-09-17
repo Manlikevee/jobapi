@@ -831,8 +831,15 @@ def savedtimelinepost(request):
             message = 'Post unliked'
             post = postings.objects.filter(messageid=post_id).first()
             postserialized = postingserializer(post)
-            allposts = postings.objects.all().order_by('-id')
-            postserializer = postingserializer(allposts, many=True)
+            slug = request.data.get('tagslug')
+            if (slug):
+                tag = get_object_or_404(Tag, slug=slug)
+                post = postings.objects.filter(tags=tag).order_by('-id')
+                postserialized = postingserializer(post, many=True)
+            else:
+
+                allposts = postings.objects.all().order_by('-id')
+                postserializer = postingserializer(allposts, many=True)
             queryset2 = postings.tags.most_common()[:4]
             json_data_lists = []
             common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
@@ -859,8 +866,18 @@ def savedtimelinepost(request):
             user = myuser
             post = postings.objects.filter(messageid=post_id).first()
             postserialized = postingserializer(post)
-            allposts = postings.objects.all().order_by('-id')
-            postserializer = postingserializer(allposts, many=True)
+
+            slug = request.data.get('tagslug')
+            if (slug):
+                tag = get_object_or_404(Tag, slug=slug)
+                post = postings.objects.filter(tags=tag).order_by('-id')
+                postserialized = postingserializer(post, many=True)
+            else:
+
+                allposts = postings.objects.all().order_by('-id')
+                postserializer = postingserializer(allposts, many=True)
+
+
             queryset2 = postings.tags.most_common()[:4]
             json_data_lists = []
             common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
@@ -888,8 +905,7 @@ def savedtimelinepost(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def newcomment(request, id):
-    allposts = postings.objects.all().order_by('-id')
-    postserializer = postingserializer(allposts, many=True)
+    post_id = request.data.get('tagslug')
 
     json_data_lists = []
     queryset2 = postings.tags.most_common()[:4]
@@ -924,8 +940,14 @@ def newcomment(request, id):
 
             a.testj.append(dest12)
             a.save()
-            post = postings.objects.filter(messageid=id).first()
-            postserialized = postingserializer(post)
+            if (post_id):
+                tag = get_object_or_404(Tag, slug=post_id)
+                post = postings.objects.filter(tags=tag).order_by('-id')
+                postserialized = postingserializer(post, many=True)
+            else:
+
+                allposts = postings.objects.all().order_by('-id')
+                postserializer = postingserializer(allposts, many=True)
             apidata = {
                     'message': 'Comment Added Successfully',
                     'allposts': postserializer.data,
@@ -940,8 +962,14 @@ def newcomment(request, id):
             # jsondata = get_object_or_404(postings, messageid=id)
             a.testj.append(dest12)
             a.save()
-            post = postings.objects.filter(messageid=id).first()
-            postserialized = postingserializer(post)
+            if (post_id):
+                tag = get_object_or_404(Tag, slug=post_id)
+                post = postings.objects.filter(tags=tag).order_by('-id')
+                postserialized = postingserializer(post, many=True)
+            else:
+
+                allposts = postings.objects.all().order_by('-id')
+                postserializer = postingserializer(allposts, many=True)
             apidata = {
                 'message': 'Comment Added Successfully',
                 'allposts': postserializer.data,
@@ -1002,16 +1030,17 @@ def applications(request, pk):
         return Response(context, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def tagged(request, slug):
+    user = request.user
     tag = get_object_or_404(Tag, slug=slug)
     post = postings.objects.filter(tags=tag).order_by('-id')
-    postserialized = postingserializer(post)
+    postserialized = postingserializer(post, many=True)
     queryset2 = postings.tags.most_common()[:4]
-    myprofile = Profile.objects.filter(user=request.user).first()
+    myprofile = Profile.objects.filter(user=user).first()
     myprofileserializer = ProfileSerializer(myprofile)
     # Exclude the current user by ID
-    all_records_except_current_user = Profile.objects.all().exclude(user=request.user).order_by('?')[:2]
+    all_records_except_current_user = Profile.objects.all().exclude(user=user).order_by('?')[:2]
 
     profileserializer = ProfileSerializer(all_records_except_current_user, many=True)
     json_data_lists = []
