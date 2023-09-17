@@ -977,3 +977,25 @@ def postingsinglepage(request, id):
         return Response({'message': 'We Are Unable To Process Your Request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def applications(request, pk):
+    s = shortuuid.ShortUUID(alphabet="0123456789")
+    otp = s.random(length=16)
+    jb = get_object_or_404(Jobs, id=pk)
+    if Applications.objects.filter(user=request.user).filter(jobapplied=jb).exists():
+        context = {
+
+            'message': 'You Have Already Applied For This Role'
+        }
+
+        return Response(context, status=status.HTTP_200_OK)
+    else:
+        Applications.objects.create(user=request.user, author=jb.user, application_id=otp,
+                            jobapplied=jb)
+        context = {
+
+            'message': 'Application Submitted'
+        }
+
+        return Response(context, status=status.HTTP_200_OK)
