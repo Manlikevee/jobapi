@@ -1007,10 +1007,27 @@ def tagged(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
     post = postings.objects.filter(tags=tag).order_by('-id')
     postserialized = postingserializer(post)
+    queryset2 = postings.tags.most_common()[:4]
+    myprofile = Profile.objects.filter(user=request.user).first()
+    myprofileserializer = ProfileSerializer(myprofile)
+    # Exclude the current user by ID
+    all_records_except_current_user = Profile.objects.all().exclude(user=request.user).order_by('?')[:2]
 
-    apidata = {
+    profileserializer = ProfileSerializer(all_records_except_current_user, many=True)
+    json_data_lists = []
+    common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
+    for a in common_tags:
+        # Construct a dictionary with the desired data
+        datas = {"name": a.slug, "number": a.num_times}  # Replace with your data
+
+        # Append the dictionary to the list
+        json_data_lists.append(datas)
+
+    context = {
         'message': 'Successfully Fetched',
         'allposts': postserialized.data,
+        'trending': json_data_lists,
+        'profileserializer': profileserializer.data,
+        'myprofileserializer': myprofileserializer.data
     }
-
-    return Response(apidata, status=status.HTTP_200_OK)
+    return Response(context, status=status.HTTP_200_OK)
