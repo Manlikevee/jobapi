@@ -36,6 +36,7 @@ urlpatterns = [
     path('CommonTagAPIView', CommonTagAPIView.as_view(), name="CommonTagAPIView"),
     path('postingsinglepage/<int:id>', postingsinglepage, name="postingsinglepage"),
     path('applications/<int:pk>/', applications, name='applications'),
+    path('tag/<slug:slug>/', tagged, name="tagged"),
 ]
 
 

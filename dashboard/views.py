@@ -12,6 +12,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from taggit.models import Tag
 
 from .serializer import *
 from users.models import *
@@ -999,3 +1000,17 @@ def applications(request, pk):
         }
 
         return Response(context, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def tagged(request, slug):
+    tag = get_object_or_404(Tag, slug=slug)
+    post = postings.objects.filter(tags=tag).order_by('-id')
+    postserialized = postingserializer(post)
+
+    apidata = {
+        'message': 'Successfully Fetched',
+        'allposts': postserialized.data,
+    }
+
+    return Response(apidata, status=status.HTTP_200_OK)
