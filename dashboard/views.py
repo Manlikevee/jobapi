@@ -811,7 +811,15 @@ class CommonTagAPIView(APIView):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def savedtimelinepost(request):
+    queryset2 = postings.tags.most_common()[:4]
+    json_data_lists = []
+    common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
+    for a in common_tags:
+        # Construct a dictionary with the desired data
+        datas = {"name": a.slug, "number": a.num_times}  # Replace with your data
 
+        # Append the dictionary to the list
+        json_data_lists.append(datas)
     myuser = request.user
     if request.method == 'POST':
         # Get the post ID from the POST data
@@ -836,28 +844,27 @@ def savedtimelinepost(request):
                 tag = get_object_or_404(Tag, slug=slug)
                 post = postings.objects.filter(tags=tag).order_by('-id')
                 postserialized = postingserializer(post, many=True)
+
+                context = {
+                    'allposts': postserialized.data,
+                    'saved': saved,
+                    'message': message,
+                    'tagdata': json_data_lists,
+                }
+
+                return Response(context, status=status.HTTP_200_OK)
             else:
 
                 allposts = postings.objects.all().order_by('-id')
                 postserializer = postingserializer(allposts, many=True)
-            queryset2 = postings.tags.most_common()[:4]
-            json_data_lists = []
-            common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
-            for a in common_tags:
-                # Construct a dictionary with the desired data
-                datas = {"name": a.slug, "number": a.num_times}  # Replace with your data
+                context = {
+                    'allposts': postserializer.data,
+                    'saved': saved,
+                    'message': message,
+                    'tagdata': json_data_lists,
+                }
 
-                # Append the dictionary to the list
-                json_data_lists.append(datas)
-            context = {
-                'allposts': postserializer.data,
-                'saved': saved,
-                'message': message,
-                'tagdata': json_data_lists,
-                'mypost': postserialized.data,
-            }
-
-            return Response(context, status=status.HTTP_200_OK)
+                return Response(context, status=status.HTTP_200_OK)
         else:
             # If no, add the current user to the post's saved_by ManyToMany field
             post.likes.add(myuser)
@@ -870,32 +877,32 @@ def savedtimelinepost(request):
             slug = request.data.get('tagslug')
             if (slug):
                 tag = get_object_or_404(Tag, slug=slug)
-                post = postings.objects.filter(tags=tag).order_by('-id')
-                postserialized = postingserializer(post, many=True)
+                posts = postings.objects.filter(tags=tag).order_by('-id')
+                postserialized = postingserializer(posts, many=True)
+                context = {
+                    'allposts': postserialized.data,
+                    'saved': saved,
+                    'message': message,
+                    'tagdata': json_data_lists,
+                }
+
+                return Response(context, status=status.HTTP_200_OK)
+
             else:
 
                 allposts = postings.objects.all().order_by('-id')
                 postserializer = postingserializer(allposts, many=True)
 
 
-            queryset2 = postings.tags.most_common()[:4]
-            json_data_lists = []
-            common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
-            for a in common_tags:
-                # Construct a dictionary with the desired data
-                datas = {"name": a.slug, "number": a.num_times}  # Replace with your data
+                context = {
+                        'allposts': postserializer.data,
+                        'saved': saved,
+                        'message': message,
+                        'tagdata': json_data_lists,
 
-                # Append the dictionary to the list
-                json_data_lists.append(datas)
-            context = {
-                'allposts': postserializer.data,
-                'saved': saved,
-                'message': message,
-                'tagdata': json_data_lists,
-                'mypost': postserialized.data,
-            }
+                    }
 
-            return Response(context, status=status.HTTP_200_OK)
+                return Response(context, status=status.HTTP_200_OK)
 
     # Return an error response for unsupported methods
     return JsonResponse({'saved': False, 'message': 'Invalid request method'})
