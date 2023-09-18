@@ -70,6 +70,7 @@ def jobseekerdashboard(request):
     jobcardcount = Jobs.objects.filter(likes__in=[user]).all().order_by('-id').count()
     submitcount = Applications.objects.filter(user=request.user).count()
 
+
     context = {
         'usecase': usecase.data,
         'allmessages': all_messages_folders_serializer.data,
