@@ -6,7 +6,7 @@ from .models import *
 class Userserializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email']  # Or specify the fields you want to expose
+        fields = ['username', 'first_name', 'last_name', 'email', 'id']  # Or specify the fields you want to expose
 
 
 class Completeprofile(serializers.ModelSerializer):
