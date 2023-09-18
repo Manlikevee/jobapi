@@ -316,9 +316,9 @@ def keyword(request):
         return Response({'message': 'We Are Unable To Process Your Request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@permission_classes([IsAuthenticated])
-@login_required
+
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def usermessagecreate(request, id):
     current_time = timezone.now()
     Profile.objects.update_or_create(
