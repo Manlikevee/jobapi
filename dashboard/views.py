@@ -893,14 +893,13 @@ def savedtimelinepost(request):
                 allposts = postings.objects.all().order_by('-id')
                 postserializer = postingserializer(allposts, many=True)
 
-
                 context = {
-                        'allposts': postserializer.data,
-                        'saved': saved,
-                        'message': message,
-                        'tagdata': json_data_lists,
+                    'allposts': postserializer.data,
+                    'saved': saved,
+                    'message': message,
+                    'tagdata': json_data_lists,
 
-                    }
+                }
 
                 return Response(context, status=status.HTTP_200_OK)
 
@@ -908,12 +907,9 @@ def savedtimelinepost(request):
     return JsonResponse({'saved': False, 'message': 'Invalid request method'})
 
 
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def newcomment(request, id):
-    post_id = request.data.get('tagslug')
-
     json_data_lists = []
     queryset2 = postings.tags.most_common()[:4]
     common_tags = queryset2.annotate(num_times=Count('taggit_taggeditem_items'))
@@ -932,18 +928,17 @@ def newcomment(request, id):
 
     a = get_object_or_404(postings, messageid=id)
 
-
-
     if request.method == 'POST':
         myimage = request.data.get('myimg')
         keyword = request.data.get('keyword')
+        post_id = request.data.get('tagslug')
         print(keyword)
         if myimage:
             serializer = UploadedImage.objects.create(image=myimage)
             serializer.save()
             serializeddata = Imagetest(serializer)
             dest12 = {"sender": f"{request.user.username}", "senderid": f"{request.user.id}", "commentid": f"{otp}",
-                          "messagetime": f"{ves}", "message": f"{keyword}"}
+                      "messagetime": f"{ves}", "message": f"{keyword}"}
 
             a.testj.append(dest12)
             a.save()
@@ -951,16 +946,23 @@ def newcomment(request, id):
                 tag = get_object_or_404(Tag, slug=post_id)
                 post = postings.objects.filter(tags=tag).order_by('-id')
                 postserialized = postingserializer(post, many=True)
+                apidata = {
+                    'message': 'Comment Added Successfully',
+                    'allposts': postingserializer.data,
+                    'trending': json_data_lists,
+                    'mypost': postingserializer.data,
+                }
+                return Response(apidata, status=status.HTTP_200_OK)
             else:
 
                 allposts = postings.objects.all().order_by('-id')
                 postserializer = postingserializer(allposts, many=True)
             apidata = {
-                    'message': 'Comment Added Successfully',
-                    'allposts': postserializer.data,
-                    'trending': json_data_lists,
+                'message': 'Comment Added Successfully',
+                'allposts': postserializer.data,
+                'trending': json_data_lists,
                 'mypost': postserialized.data,
-                }
+            }
             return Response(apidata, status=status.HTTP_200_OK)
 
         else:
@@ -973,23 +975,29 @@ def newcomment(request, id):
                 tag = get_object_or_404(Tag, slug=post_id)
                 post = postings.objects.filter(tags=tag).order_by('-id')
                 postserialized = postingserializer(post, many=True)
+
+                apidata = {
+                    'message': 'Comment Added Successfully',
+                    'allposts': postserialized.data,
+                    'trending': json_data_lists,
+                    'mypost': postserialized.data,
+                }
+
+                return Response(apidata, status=status.HTTP_200_OK)
             else:
 
                 allposts = postings.objects.all().order_by('-id')
                 postserializer = postingserializer(allposts, many=True)
-            apidata = {
-                'message': 'Comment Added Successfully',
-                'allposts': postserializer.data,
-                'trending': json_data_lists,
-                'mypost': postserialized.data,
-            }
+                apidata = {
+                    'message': 'Comment Added Successfully',
+                    'allposts': postserializer.data,
+                    'trending': json_data_lists,
+                    'mypost': postserializer.data,
+                }
 
-            return Response(apidata, status=status.HTTP_200_OK)
+                return Response(apidata, status=status.HTTP_200_OK)
 
     return Response({'message': 'We Are Unable To Process Your Request'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
 
 
 @api_view(['GET'])
@@ -1028,13 +1036,14 @@ def applications(request, pk):
         return Response(context, status=status.HTTP_200_OK)
     else:
         Applications.objects.create(user=request.user, author=jb.user, application_id=otp,
-                            jobapplied=jb)
+                                    jobapplied=jb)
         context = {
 
             'message': 'Application Submitted'
         }
 
         return Response(context, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
