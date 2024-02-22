@@ -6,7 +6,7 @@ from django.dispatch import receiver
 from users.models import Profile
 
 s = shortuuid.ShortUUID(alphabet="0123456789")
-otp = s.random(length=15)
+otp = s.random(length=5)
 
 
 @receiver(post_save, sender=User)

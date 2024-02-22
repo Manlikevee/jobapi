@@ -155,13 +155,14 @@ SIMPLE_JWT = {
 # }
 
 
+
 DATABASES = {
     'default': {
         'ENGINE': "django.db.backends.postgresql_psycopg2",
         'HOST':  str(os.getenv('HOST')),
         'NAME': str(os.getenv('NAME')),
         'USER': str(os.getenv('USER')),
-        'PASSWORD': str(os.getenv('PASSWORD')),
+        'PASSWORD': 'Chibaby123456!@',
         'PORT': str(os.getenv('PORT')),
         'CONN_MAX_AGE': 600,
     }
