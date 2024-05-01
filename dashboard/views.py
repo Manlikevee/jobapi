@@ -575,29 +575,42 @@ def messageportals(request, id):
         print('request', request.data)
         myimage = request.data.get('myimg')
         data = request.data.get('data')  # Assuming 'data' is the key containing the JSON payload
-
+        image_data = request.FILES.get('myaudio')
         print('imafe is', myimage)
         print('data', data)
-        # if data:
-        #     # id =data.get('id', "")
-        #     senderid = data.get('senderid', "")
-        #     receiverid = data.get('receiverid', "")
-        #     message_id = id
-        #     message_type = data.get('type', "text")
-        #     sender_name = data.get('sender', "")
-        #     sender_from = data.get('from', "")
-        #     quoted_message_id = data.get('quotedid', "")
-        #     message_content = data.get('message', "")
-        #     message_datetime = data.get('datetime', "")
-        #     image_url = data.get('imageUrl', "")
-        #
-        #     # Now you can use these variables as needed in your Django view logic
-        # else:
-        #     # Set all variables to empty strings if 'data' key is not found in the request payload
-        #     senderid = receiverid = message_id = message_type = sender_name = sender_from = quoted_message_id = message_content = message_datetime = image_url = ""
-
         if messagetone.sender == request.user:
-            if myimage:
+            if image_data:
+                serializerz = Image.objects.create(image=image_data)
+                serializerz.save()
+                serializer = ImageSerializer(serializerz).data
+
+                data_dict = {}
+                for key, value in request.data.items():
+                    if 'myaudio' not in key:
+                        field_name = key.split('[')[-1][:-1]  # Extract field name
+                        data_dict[field_name] = value  # Assuming each key has only one value
+
+                data_dict['datetime'] = str(vee)
+                data_dict['senderid'] = request.user.id
+                data_dict['recieverid'] = messagetone.reciever.id
+                data_dict['audio_url'] = serializer['image']
+                dest12 = data_dict
+                jsondata = get_object_or_404(messagefolder, messageid=messagetone)
+                jsondata.testj.append(dest12)
+                jsondata.save()
+                print('json obj', dest12)
+
+                mymessage = messagefolder.objects.filter(messageid=messagetone).first()
+                # print(mymessage)
+                messageserialized = messageserializer(mymessage)
+
+                apidata = {
+                    'messageserialized': messageserialized.data,
+                    'usersdataserialized': messagetonedata.data,
+                    'allmessages': all_messages_folders_serializer.data
+                }
+                return Response(apidata, status=status.HTTP_200_OK)
+            elif myimage:
                 data_dict = {}
                 for key, value in request.data.items():
                     if 'myimg' not in key:
@@ -608,20 +621,6 @@ def messageportals(request, id):
                 serializer.save()
                 serializeddata = Imagetest(serializer).data
                 print('serialized image', serializeddata)
-                # dest12 = {"sender": f"{request.user}", "reciever": f"{messagetone.reciever}", "messageid": f"{id}",
-                #           "messagetime": f"{vee}", "image": True,
-                #
-                #           "senderid": f"{request.user}",
-                #           "receiverid": f"{messagetone.reciever}",
-                #           "id": message_id,
-                #           "type": message_type,
-                #           "from": sender_from,
-                #           "quotedid": quoted_message_id,
-                #           "message": message_content,
-                #           "datetime": message_datetime,
-                #           "imageurl": image_url,
-                #
-                #           }
                 data_dict['datetime'] = str(vee)
                 data_dict['senderid'] = request.user.id
                 data_dict['recieverid'] = messagetone.reciever.id
@@ -678,7 +677,39 @@ def messageportals(request, id):
 
                 return Response(apidata, status=status.HTTP_200_OK)
         if messagetone.reciever == request.user:
-            if myimage:
+            if image_data:
+                serializerz = Image.objects.create(image=image_data)
+                serializerz.save()
+                serializer = ImageSerializer(serializerz).data
+
+                data_dict = {}
+                for key, value in request.data.items():
+                    if 'myaudio' not in key:
+                        field_name = key.split('[')[-1][:-1]  # Extract field name
+                        data_dict[field_name] = value  # Assuming each key has only one value
+
+                data_dict['datetime'] = str(vee)
+                data_dict['senderid'] = messagetone.reciever.id
+                data_dict['recieverid'] = request.user.id
+                data_dict['audio_url'] = serializer['image']
+                dest12 = data_dict
+                jsondata = get_object_or_404(messagefolder, messageid=messagetone)
+                jsondata.testj.append(dest12)
+                jsondata.save()
+                print('json obj', dest12)
+
+                mymessage = messagefolder.objects.filter(messageid=messagetone).first()
+                # print(mymessage)
+                messageserialized = messageserializer(mymessage)
+
+                apidata = {
+                    'messageserialized': messageserialized.data,
+                    'usersdataserialized': messagetonedata.data,
+                    'allmessages': all_messages_folders_serializer.data
+                }
+                return Response(apidata, status=status.HTTP_200_OK)
+
+            elif myimage:
                 data_dict = {}
                 for key, value in request.data.items():
                     if 'myimg' not in key:
