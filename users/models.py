@@ -898,10 +898,10 @@ class visitorslog(models.Model):
     def save(self, *args, **kwargs):
         if not self.ref:
             # Generate a positive random number within the range of a BigIntegerField
-            self.ref = random.randint(1, 9223372036854775807)  # Maximum positive value for a BigIntegerField
+            self.ref = shortuuid.ShortUUID(alphabet="0123456789").random(length=10)  # Maximum positive value for a BigIntegerField
             # Ensure uniqueness
             while visitorslog.objects.filter(ref=self.ref).exists():
-                self.ref = random.randint(1, 9223372036854775807)
+                self.ref = shortuuid.ShortUUID(alphabet="0123456789").random(length=10)
         super().save(*args, **kwargs)
 
     def __str__(self):
