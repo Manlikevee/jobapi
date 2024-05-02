@@ -1,3 +1,5 @@
+import random
+
 import shortuuid
 from cloudinary.models import CloudinaryField
 from django.db import models
@@ -5,7 +7,6 @@ from django.contrib.auth.models import User
 from PIL import Image
 from django.utils.timezone import now
 from taggit.managers import TaggableManager
-
 
 s = shortuuid.ShortUUID(alphabet="0123456789").random(length=10)
 
@@ -896,8 +897,13 @@ class visitorslog(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.ref:
-            self.ref = s
+            # Generate a positive random number within the range of a BigIntegerField
+            self.ref = random.randint(1, 9223372036854775807)  # Maximum positive value for a BigIntegerField
+            # Ensure uniqueness
+            while visitorslog.objects.filter(ref=self.ref).exists():
+                self.ref = random.randint(1, 9223372036854775807)
         super().save(*args, **kwargs)
+
     def __str__(self):
         return self.first_name
 

@@ -693,6 +693,9 @@ def messageportals(request, id):
 
 
 
+
+
+
                 data_dict['datetime'] = str(vee)
                 data_dict['senderid'] = messagetone.reciever.id
                 data_dict['recieverid'] = request.user.id
