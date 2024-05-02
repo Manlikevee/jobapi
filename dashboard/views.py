@@ -688,6 +688,9 @@ def messageportals(request, id):
                         field_name = key.split('[')[-1][:-1]  # Extract field name
                         data_dict[field_name] = value  # Assuming each key has only one value
 
+
+
+
                 data_dict['datetime'] = str(vee)
                 data_dict['senderid'] = messagetone.reciever.id
                 data_dict['recieverid'] = request.user.id
