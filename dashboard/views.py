@@ -392,8 +392,10 @@ def usermessagecreate(request, id):
         if messagestarter.objects.filter(sender=request.user).filter(reciever=myuser).exists():
             allvee = messagestarter.objects.filter(sender=request.user).filter(reciever=myuser).first()
             message_id = allvee.messageid
+            usecases = messagestarter.objects.filter(Q(sender=user) | Q(reciever=user)).all()
+            usecase = messagestarterserializer(usecases, many=True)
             context = {
-                # 'user_publication_set': user_publication_set,
+                'usecase': usecase.data,
                 'id': message_id,
                 'message': 'successfully fetched'
             }
@@ -416,8 +418,10 @@ def usermessagecreate(request, id):
             messagestore = messagefolder.objects.update_or_create(messageid=messageobj.messageid,
                                                                   defaults={'messageid': messageobj})
 
+            usecases = messagestarter.objects.filter(Q(sender=user) | Q(reciever=user)).all()
+            usecase = messagestarterserializer(usecases, many=True)
             context = {
-                # 'user_publication_set': user_publication_set,
+                'usecase': usecase.data,
                 'id': messageobj.messageid,
                 'message': 'Message Object Created'
             }
@@ -432,8 +436,10 @@ def usermessagecreate(request, id):
         messagestore = messagefolder.objects.update_or_create(messageid=messageobj.messageid,
                                                               defaults={'messageid': messageobj})
 
+        usecases = messagestarter.objects.filter(Q(sender=user) | Q(reciever=user)).all()
+        usecase = messagestarterserializer(usecases, many=True)
         context = {
-            # 'user_publication_set': user_publication_set,
+            'usecase': usecase.data,
             'id': messageobj.messageid,
             'message': 'Message Object Created'
         }
