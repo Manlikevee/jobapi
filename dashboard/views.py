@@ -392,8 +392,7 @@ def usermessagecreate(request, id):
         if messagestarter.objects.filter(sender=request.user).filter(reciever=myuser).exists():
             allvee = messagestarter.objects.filter(sender=request.user).filter(reciever=myuser).first()
             message_id = allvee.messageid
-            usecases = messagestarter.objects.filter(Q(sender=user) | Q(reciever=user)).all()
-            usecase = messagestarterserializer(usecases, many=True)
+            usecase = messagestarterserializer(allvee)
             context = {
                 'usecase': usecase.data,
                 'id': message_id,
@@ -404,8 +403,9 @@ def usermessagecreate(request, id):
         if messagestarter.objects.filter(sender=myuser).filter(reciever=request.user).exists():
             allvee = messagestarter.objects.filter(sender=myuser).filter(reciever=request.user).first()
             message_id = allvee.messageid
+            usecase = messagestarterserializer(allvee)
             context = {
-                # 'user_publication_set': user_publication_set,
+                'usecase': usecase.data,
                 'id': message_id,
                 'message': 'successfully fetched'
             }
@@ -418,8 +418,7 @@ def usermessagecreate(request, id):
             messagestore = messagefolder.objects.update_or_create(messageid=messageobj.messageid,
                                                                   defaults={'messageid': messageobj})
 
-            usecases = messagestarter.objects.filter(Q(sender=user) | Q(reciever=user)).all()
-            usecase = messagestarterserializer(usecases, many=True)
+            usecase = messagestarterserializer(messageobj)
             context = {
                 'usecase': usecase.data,
                 'id': messageobj.messageid,
@@ -436,8 +435,7 @@ def usermessagecreate(request, id):
         messagestore = messagefolder.objects.update_or_create(messageid=messageobj.messageid,
                                                               defaults={'messageid': messageobj})
 
-        usecases = messagestarter.objects.filter(Q(sender=user) | Q(reciever=user)).all()
-        usecase = messagestarterserializer(usecases, many=True)
+        usecase = messagestarterserializer(messageobj)
         context = {
             'usecase': usecase.data,
             'id': messageobj.messageid,
