@@ -364,3 +364,47 @@ def getvisitordetails(request):
     # Return an error response for unsupported methods
     return JsonResponse({'message': 'Invalid request method'},
                         status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+
+
+@api_view(['POST'])
+def logoutvisitor(request):
+    if request.method == 'POST':
+        # Get the post ID from the POST data
+        visitor_id = request.data.get('post_id')
+        tag_id = request.data.get('tag_id')
+
+        if visitor_id:
+            try:
+                post = visitorslog.objects.get(ref=visitor_id)
+                if post.status == 'Approval Successful':
+                    post.status = 'visitation_complete'
+                    post.save()
+                    message = 'Visitation Complete'
+                    tag = qrcodes.objects.filter(used_by=post).first()
+                    tag.availability = True
+                    tag.save()
+                else:
+                    message = 'Invalid request'
+
+                visitor_requests = visitorslog.objects.all()
+                # Serialize the data
+                serializer = VisitorRequestSerializer(visitor_requests, many=True)
+
+                return Response({'message': message, 'visitorsdata': serializer.data}, status=status.HTTP_200_OK)
+            except visitorslog.DoesNotExist:
+                return JsonResponse({'message': 'Visitor not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        elif tag_id:
+            print('yoo')
+        else:
+            print('unable to process your request')
+
+        try:
+            post = visitorslog.objects.get(ref=visitor_id)
+        except visitorslog.DoesNotExist:
+            return JsonResponse({'message': 'Visitor not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    return JsonResponse({'message': 'Invalid request method'},
+                        status=status.HTTP_405_METHOD_NOT_ALLOWED)
