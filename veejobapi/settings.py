@@ -20,7 +20,6 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -31,7 +30,6 @@ SECRET_KEY = 'django-insecure-@*8ifwq(f&mz*%j(k$rj!ek$$k--&tcs6p*mth=)mdlp_o1#fp
 DEBUG = True
 
 ALLOWED_HOSTS = ['*', '.vercel.app', '.now.sh']
-
 
 # Application definition
 
@@ -55,9 +53,7 @@ INSTALLED_APPS = [
     'users'
 ]
 
-
 CORS_ALLOW_ALL_ORIGINS = True
-
 
 REST_FRAMEWORK = {
 
@@ -69,7 +65,6 @@ REST_FRAMEWORK = {
     )
 
 }
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -103,7 +98,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'veejobapi.wsgi.application'
-
 
 SIMPLE_JWT = {
     # "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
@@ -158,11 +152,10 @@ SIMPLE_JWT = {
 # }
 
 
-
 DATABASES = {
     'default': {
         'ENGINE': "django.db.backends.postgresql_psycopg2",
-        'HOST':  str(os.getenv('HOST')),
+        'HOST': str(os.getenv('HOST')),
         'NAME': str(os.getenv('NAME')),
         'USER': str(os.getenv('USER')),
         'PASSWORD': 'Chibaby123456!@',
@@ -170,7 +163,6 @@ DATABASES = {
         'CONN_MAX_AGE': 600,
     }
 }
-
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -201,7 +193,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -213,15 +204,12 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
 
 
 EMAIL_HOST = 'cellafinance.com'
@@ -230,8 +218,6 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'support@cellafinance.com'
 EMAIL_HOST_PASSWORD = 'TestPractice'
-
-
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = os.path.join(BASE_DIR, 'static'),
@@ -245,19 +231,12 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'viktortech',
-    'API_KEY': str(os.getenv('APIKEY')) ,
+    'API_KEY': str(os.getenv('APIKEY')),
     'API_SECRET': str(os.getenv('API_SECRET'))
 }
-
-
-
-
-
-
 
 import cloudinary
 import cloudinary.uploader
