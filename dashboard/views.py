@@ -1505,3 +1505,104 @@ def upload_image(request):
         serializer = ImageSerializer(serializerz)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
+
+
+
+@api_view(['POST'])
+@parser_classes([MultiPartParser, FormParser])
+def create_company(request):
+    data = request.data
+    company_name = data.get('companyName')
+    logo = request.FILES.get('logo')
+
+    if not company_name or not logo:
+        return Response({'error': 'Invalid data'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if the user already exists
+    try:
+        user = User.objects.get(username=company_name)
+        # Check if the user already has an associated company
+        if hasattr(user, 'company'):
+            return Response({'error': 'Company already exists for this user'}, status=status.HTTP_400_BAD_REQUEST)
+    except User.DoesNotExist:
+        # Create a new user
+        user = User.objects.create_user(
+            username=company_name,
+            email=f'admin@{company_name}.com',
+            password='test'
+        )
+
+    # Create a new company instance
+    company_instance = company(
+        user=user,
+        organization_name=company_name,
+        logo=logo  # Directly set the uploaded logo file
+    )
+
+    company_instance.save()
+
+    return Response({'message': 'Company created successfully'}, status=status.HTTP_201_CREATED)
+
+
+
+from django.http import HttpResponse
+import requests
+from bs4 import BeautifulSoup
+import re
+
+
+def scrape_company_info(company_name):
+    # Format company name for Wikipedia URL
+    formatted_name = company_name.replace(" ", "_")
+    url = f"https://en.wikipedia.org/wiki/{formatted_name}"
+
+    # Fetch the page
+    response = requests.get(url)
+    if response.status_code != 200:
+        return f"Failed to retrieve data for {company_name}"
+
+    # Parse the page
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    # Find the first meaningful paragraph
+    description = ""
+    paragraphs = soup.find_all('p')
+    for paragraph in paragraphs:
+        text = paragraph.get_text(strip=True)
+        if text:
+            description = text
+            break
+
+    # Clean up and format the text
+    # Remove citation links and numbers
+    description = re.sub(r'\[\d+\]', '', description)
+    # Replace multiple spaces or new lines with a single space
+    description = re.sub(r'\s+', ' ', description)
+    # Strip leading and trailing spaces
+    description = description.strip()
+
+    # Print the data to the console
+    print(f"Company: {company_name}")
+    print(f"Description: {description}")
+    print(f"URL: {url}")
+
+    return description
+
+
+def update_all_companies_bio(request):
+    companies = company.objects.all()
+    for compani in companies:
+        bio = scrape_company_info(compani.organization_name)
+        compani.organization_bio = bio
+        compani.save()
+
+    return HttpResponse("Updated bios for all companies")
+
+def scrape_view(request):
+    company_name = request.GET.get('companyname', '')
+    if not company_name:
+        return HttpResponse("Please provide a company name using the 'companyname' query parameter.")
+
+    description = scrape_company_info(company_name)
+    return HttpResponse(f"Scraped data for {company_name}: {description}")

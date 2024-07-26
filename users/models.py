@@ -917,3 +917,33 @@ class qrcodes(models.Model):
 
     def __str__(self):
         return self.code_tag
+
+
+
+class company(models.Model):
+    ref = models.BigIntegerField(blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=now)
+    active = models.BooleanField(default=False)
+    organization_name = models.CharField(max_length=100, blank=True)
+    organization_bio = models.CharField(max_length=1900, blank=True)
+    organization_type = models.CharField(max_length=100, blank=True)
+    website = models.CharField(max_length=100, blank=True)
+    organization_address = models.CharField(max_length=100, blank=True)
+    organization_email = models.CharField(max_length=100, blank=True)
+    organization_contactmethod = models.CharField(max_length=100, blank=True)
+    logo = models.ImageField(default='deflogo.jpg', upload_to='organizations_images')
+
+    def save(self, *args, **kwargs):
+        if not self.ref:
+            # Generate a positive random number within the range of a BigIntegerField
+            self.ref = shortuuid.ShortUUID(alphabet="0123456789").random(
+                length=10)  # Maximum positive value for a BigIntegerField
+            # Ensure uniqueness
+            while company.objects.filter(ref=self.ref).exists():
+                self.ref = shortuuid.ShortUUID(alphabet="0123456789").random(length=10)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.organization_name
+

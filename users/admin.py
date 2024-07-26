@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Profile, workexperience, Personaldetails, Jobsalert, messagestarter, messagefolder, Jobs, \
-    PaymentDetails, jobfeatures, Userplan, exceltest, Areaofexp, Category, Question, UserMembership, exceltest, UploadedImage, postings, employees , visitorslog, qrcodes, Image
+    PaymentDetails,company, jobfeatures, Userplan, exceltest, Areaofexp, Category, Question, UserMembership, exceltest, UploadedImage, postings, employees , visitorslog, qrcodes, Image
 # Register your models here.
 
 
@@ -22,3 +22,6 @@ admin.site.register(employees)
 admin.site.register(visitorslog)
 admin.site.register(qrcodes)
 admin.site.register(Image)
+admin.site.register(company)
+
+
