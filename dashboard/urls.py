@@ -51,8 +51,6 @@ urlpatterns = [
     path('upload/', upload_image, name='upload_image'),
     path('deletemessageportals/<int:id>', deletemessageportals, name='deletemessageportals'),
     path('api/create-company/', create_company, name='create-company'),
-    path('scrape/', scrape_view, name='scrape_view'),
-    path('update_all_companies_bio/', update_all_companies_bio, name='scrape_view'),
 
 
 ]
