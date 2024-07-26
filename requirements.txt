@@ -52,7 +52,6 @@ python-decouple==3.8
 python-dotenv==1.0.0
 pytz==2023.3.post1
 referencing==0.30.2
-regex==2023.8.8
 requests==2.31.0
 rpds-py==0.10.3
 shortuuid==1.0.11
