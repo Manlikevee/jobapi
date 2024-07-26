@@ -909,6 +909,10 @@ def userqrcards(request):
     return Response(context, status=status.HTTP_200_OK)
 
 
+
+
+
+
 import random
 
 
