@@ -934,6 +934,8 @@ class company(models.Model):
     organization_contactmethod = models.CharField(max_length=100, blank=True)
     logo = models.ImageField(default='deflogo.jpg', upload_to='organizations_images')
 
+
+
     def save(self, *args, **kwargs):
         if not self.ref:
             # Generate a positive random number within the range of a BigIntegerField
