@@ -160,7 +160,7 @@ DATABASES = {
         'USER': str(os.getenv('USER')),
         'PASSWORD': 'Chibaby123456!@',
         'PORT': str(os.getenv('PORT')),
-        'CONN_MAX_AGE': 600,
+
     }
 }
 

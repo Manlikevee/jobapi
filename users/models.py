@@ -590,6 +590,7 @@ class Jobs(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    organization = models.ForeignKey('company', on_delete=models.CASCADE, null=True, blank=True)
     jobtitle = models.CharField(blank=True, null=True, max_length=600)
     jobidcode = models.PositiveBigIntegerField(blank=True, null=True, default=1)
     jobservice = models.CharField(blank=True, null=True, max_length=600)
@@ -612,8 +613,8 @@ class Jobs(models.Model):
     stage4 = models.BooleanField(default=False)
     status = models.CharField(blank=True, max_length=500, choices=Workstatus, default='pending confirmation')
     payment_data = models.JSONField(blank=True, null=True, default=list)
-    likes = models.ManyToManyField(User, related_name='blogpost_like')
-    applied = models.ManyToManyField(User, related_name='job_applied')
+    likes = models.ManyToManyField(User, related_name='blogpost_like', null=True, blank=True)
+    applied = models.ManyToManyField(User, related_name='job_applied',  null=True, blank=True)
     last_seen = models.DateTimeField(default=now, null=True, blank=True)
     tags = TaggableManager()
 
