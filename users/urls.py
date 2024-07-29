@@ -22,7 +22,8 @@ urlpatterns = [
     path('emailverification/verify/<str:auth_token>/', VerifyAccount.as_view(), name='verify-account'),
     path('newemailverification/verify/<str:auth_token>/<str:reference>/', VerifymyAccount.as_view(),
          name='newverify-account'),
-
+    path('gac',  GroqChatCompletionView.as_view(),
+         name='GroqChatCompletionView'),
 
 
 

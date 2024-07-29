@@ -18,7 +18,8 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-
+import os
+from groq import Groq
 from dashboard.serializer import Imagetest
 # from dashboard.serializer import Imagetest
 # Create your views here.
@@ -408,3 +409,30 @@ def logoutvisitor(request):
 
     return JsonResponse({'message': 'Invalid request method'},
                         status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class GroqChatCompletionView(APIView):
+    def post(self, request):
+        try:
+            client = Groq(
+                # This is the default and can be omitted
+                api_key= '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',
+            )
+
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {
+                        "role": "user",
+                        "content": "in json format  write a detail description of the application named veezitors which is a visitation portal for managing visitors safely",
+                    }
+                ],
+                model="llama3-8b-8192",
+            )
+            return Response({
+                "message": chat_completion.choices[0].message.content
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({
+                "error": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
