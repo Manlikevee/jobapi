@@ -419,7 +419,7 @@ class GroqChatCompletionView(APIView):
         try:
             client = Groq(
                 # This is the default and can be omitted
-                api_key= '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',
+                api_key= '',
             )
 
             chat_completion = client.chat.completions.create(
