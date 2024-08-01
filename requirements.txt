@@ -7,7 +7,7 @@ charset-normalizer==3.2.0
 cloudinary==1.39.0
 cryptography==42.0.8
 distro==1.9.0
-Django==5.0.7
+Django
 django-classy-tags==4.1.0
 django-cleanup==8.1.0
 django-cloudinary-storage==0.3.0
