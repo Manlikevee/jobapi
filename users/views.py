@@ -1,3 +1,6 @@
+import json
+import re
+
 from django.conf import settings
 from django.core import mail
 from django.http import JsonResponse
@@ -414,26 +417,45 @@ def logoutvisitor(request):
 
 
 
+import json
+import re
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from groq import Groq  # Ensure you have the correct import for your Groq client
+
 class GroqChatCompletionView(APIView):
     def post(self, request):
         try:
             client = Groq(
-                # This is the default and can be omitted
-                api_key= '',
+                api_key='',
             )
 
             chat_completion = client.chat.completions.create(
                 messages=[
                     {
                         "role": "user",
-                        "content": "in json format  write a detail description of the application named veezitors which is a visitation portal for managing visitors safely",
+                        "content": "in json format write a job opening at board level for the company apple, write a very detailed description of the role, the salary range, the job title, the job service, and the job category also in json format, make sure the job description is long and detailed",
                     }
                 ],
                 model="llama3-8b-8192",
             )
-            return Response({
-                "message": chat_completion.choices[0].message.content
-            }, status=status.HTTP_200_OK)
+
+            response_content = chat_completion.choices[0].message.content
+
+            # Attempt to extract the JSON part from the response content
+            json_str = None
+            try:
+                # Try to find the JSON object by looking for curly braces
+                json_str = response_content[response_content.index('{'):response_content.rindex('}')+1]
+                job_data = json.loads(json_str)
+            except (ValueError, json.JSONDecodeError) as e:
+                return Response({
+                    "error": "JSON format not found or is invalid in the response content",
+                    "details": str(e)
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            return Response(job_data, status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response({

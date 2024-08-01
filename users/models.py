@@ -561,7 +561,6 @@ class Jobs(models.Model):
         ('Wireless', 'Wireless'),
         ('Writing/Editing', 'Writing/Editing')
     ]
-
     SALARY_RANGE = [
         ('< 100', '< 100'),
         ('100-200', '100-200'),
@@ -613,6 +612,8 @@ class Jobs(models.Model):
     stage4 = models.BooleanField(default=False)
     status = models.CharField(blank=True, max_length=500, choices=Workstatus, default='pending confirmation')
     payment_data = models.JSONField(blank=True, null=True, default=list)
+    responsibilities = models.JSONField(blank=True, null=True, default=list)
+    requirements = models.JSONField(blank=True, null=True, default=list)
     likes = models.ManyToManyField(User, related_name='blogpost_like', null=True, blank=True)
     applied = models.ManyToManyField(User, related_name='job_applied',  null=True, blank=True)
     last_seen = models.DateTimeField(default=now, null=True, blank=True)
