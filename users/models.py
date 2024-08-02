@@ -614,8 +614,8 @@ class Jobs(models.Model):
     payment_data = models.JSONField(blank=True, null=True, default=list)
     responsibilities = models.JSONField(blank=True, null=True, default=list)
     requirements = models.JSONField(blank=True, null=True, default=list)
-    likes = models.ManyToManyField(User, related_name='blogpost_like', null=True, blank=True)
-    applied = models.ManyToManyField(User, related_name='job_applied',  null=True, blank=True)
+    likes = models.ManyToManyField(User, related_name='blogpost_like', blank=True)
+    applied = models.ManyToManyField(User, related_name='job_applied', blank=True)
     last_seen = models.DateTimeField(default=now, null=True, blank=True)
     tags = TaggableManager()
 
@@ -752,7 +752,7 @@ class exceltest(models.Model):
     Url = models.CharField(max_length=750, blank=True, null=True)
     logourl = models.CharField(max_length=750, blank=True, null=True)
     Year = models.CharField(max_length=750, blank=True, null=True)
-
+    schoollogo = models.FileField(blank=True, null=True, upload_to='university_logo')
     def __str__(self):
         return self.institution
 

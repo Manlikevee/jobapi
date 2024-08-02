@@ -24,7 +24,8 @@ urlpatterns = [
          name='newverify-account'),
     path('gac',  GroqChatCompletionView.as_view(),
          name='GroqChatCompletionView'),
-
+    path('vvs', save_logos_for_instances,
+         name='save_logos_for_instances'),
 
 
 ]

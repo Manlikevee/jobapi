@@ -1,9 +1,13 @@
 import json
 import re
+from urllib.request import urlretrieve
 
+import requests
 from django.conf import settings
 from django.core import mail
-from django.http import JsonResponse
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -461,3 +465,23 @@ class GroqChatCompletionView(APIView):
             return Response({
                 "error": str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+def save_logos_for_instances(request):
+    instances = exceltest.objects.all()
+    for instance in instances:
+        try:
+            # Fetch the image from the logourl
+            result = urlretrieve(instance.logourl)
+            instance.schoollogo.save(
+                instance.logourl.split('/')[-1],  # Get the file name from the URL
+                File(open(result[0], 'rb'))
+            )
+            instance.save()
+            print(f"Saved logo for {instance.institution}")
+        except Exception as e:
+            print(f"Failed to fetch logo for {instance.institution}: {e}")
+
+    return HttpResponse("Logos have been processed.")
