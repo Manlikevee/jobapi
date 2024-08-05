@@ -1,5 +1,6 @@
 from django.urls import path, include
 
+from dashboard.views import alljobcards
 from .views import *
 from django.contrib.auth import views as auth_view
 from rest_framework.routers import DefaultRouter
@@ -22,10 +23,12 @@ urlpatterns = [
     path('emailverification/verify/<str:auth_token>/', VerifyAccount.as_view(), name='verify-account'),
     path('newemailverification/verify/<str:auth_token>/<str:reference>/', VerifymyAccount.as_view(),
          name='newverify-account'),
-    path('gac',  GroqChatCompletionView.as_view(),
+    path('gac',  gemini_chat_completion_view,
          name='GroqChatCompletionView'),
     path('vvs', save_logos_for_instances,
          name='save_logos_for_instances'),
+    path('alljobcards', alljobcards,
+         name='alljobcards'),
 
 
 ]

@@ -1570,3 +1570,13 @@ def seodetail(request, id):
     }
 
     return Response(context, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def alljobcards(request):
+    jobcard = Jobs.objects.all().order_by('-id')
+    jobserialized = Jobserializer(jobcard, many=True)
+    context = {
+        'jobdetail': jobserialized.data,
+    }
+
+    return Response(context, status=status.HTTP_200_OK)

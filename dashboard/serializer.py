@@ -7,10 +7,20 @@ from taggit.serializers import (TagListSerializerField,
                                 TaggitSerializer)
 
 
+class companyserializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = company
+        fields = ['organization_name', 'logo', ]
+
 class Jobserializer(serializers.ModelSerializer):
+    organization = companyserializer()
     class Meta:
         model = Jobs
         exclude = ['applied', 'payment_data', 'is_paidfor']  # Or specify the fields you want to expose
+
+
+
 
 class seoserializer(serializers.ModelSerializer):
 

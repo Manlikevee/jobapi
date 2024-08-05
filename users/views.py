@@ -30,6 +30,7 @@ import os
 from groq import Groq
 from dashboard.serializer import Imagetest
 # from dashboard.serializer import Imagetest
+from dashboard.models import *
 # Create your views here.
 from .models import Profile
 from .serializer import *
@@ -420,43 +421,121 @@ from rest_framework import status
 from groq import Groq  # Ensure you have the correct import for your Groq client
 
 
-class GroqChatCompletionView(APIView):
-    def post(self, request):
+@api_view(['POST'])
+def groq_chat_completion_view(request):
+    try:
+        # Get a random company
+        company_instance = company.objects.order_by("?").first()
+
+        if not company_instance:
+            return Response({"error": "No company found"}, status=status.HTTP_404_NOT_FOUND)
+
+        client = Groq(
+            api_key='',
+        )
+
+        # Define the chat message
+        chat_message = {
+            "role": "user",
+            "content": f"in json format write a job opening at board level for the company {company_instance.organization_name}, write a very detailed description of the role, the salary range, the job title, the job service, and the job category also in json format, and also an array of job responsibilities and skill requirements make sure the job description is long and detailed also make sure the company name shows up in the role description and don't make the job title long",
+        }
+
+        # Get the chat completion
+        chat_completion = client.chat.completions.create(
+            messages=[chat_message],
+            model="llama3-8b-8192",
+        )
+
+        response_content = chat_completion.choices[0].message.content
+
+        # Attempt to extract the JSON part from the response content
         try:
-            client = Groq(
-                api_key='',
-            )
+            json_str = response_content[response_content.index('{'):response_content.rindex('}') + 1]
+            job_data = json.loads(json_str)
+        except (ValueError, json.JSONDecodeError) as e:
+            return Response({
+                "error": "JSON format not found or is invalid in the response content",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            chat_completion = client.chat.completions.create(
-                messages=[
+        return Response(job_data, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({
+            "error": str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+from requests.structures import CaseInsensitiveDict
+
+@api_view(['POST'])
+def gemini_chat_completion_view(request):
+    api_key = ""
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={api_key}"
+
+    headers = CaseInsensitiveDict()
+    headers["Content-Type"] = "application/json"
+
+    jobs_created = 0
+    max_jobs = 20
+
+    while jobs_created < max_jobs:
+        try:
+            print('hello')
+            # Get a random company
+            company_instance = company.objects.order_by("?").first()
+
+            if not company_instance:
+                continue
+
+            data = json.dumps({
+                "contents": [
                     {
-                        "role": "user",
-                        "content": "in json format write a job opening at board level for the company apple, write a very detailed description of the role, the salary range, the job title, the job service, and the job category also in json format, make sure the job description is long and detailed",
+                        "parts": [
+                            {
+                                "text": f"in json format write a job opening at board level for the company {company_instance.organization_name}, write a very detailed description of the role, the salary range, the job title, the job service, and the job category also in json format, and also an array of job responsibilities and skill requirements make sure the job description is long and detailed also make sure the company name shows up in the role description and don't make the job title long"
+                            }
+                        ]
                     }
-                ],
-                model="llama3-8b-8192",
-            )
+                ]
+            })
 
-            response_content = chat_completion.choices[0].message.content
+            response = requests.post(url, headers=headers, data=data)
+            response_data = response.json()
 
+            if response.status_code != 200:
+                continue
+
+            response_content = response_data['candidates'][0]['content']['parts'][0]['text']
+            print(response_content)
             # Attempt to extract the JSON part from the response content
-            json_str = None
             try:
-                # Try to find the JSON object by looking for curly braces
                 json_str = response_content[response_content.index('{'):response_content.rindex('}') + 1]
                 job_data = json.loads(json_str)
-            except (ValueError, json.JSONDecodeError) as e:
-                return Response({
-                    "error": "JSON format not found or is invalid in the response content",
-                    "details": str(e)
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            except (ValueError, json.JSONDecodeError):
+                continue
 
-            return Response(job_data, status=status.HTTP_200_OK)
+            # Create the job in the database
+            # Replace with the actual user or logic to get the user
+            Jobs.objects.create(
+                user=company_instance.user,
+                organization=company_instance,
+                jobtitle=job_data.get("job_title"),
+                jobservice=job_data.get("job_service"),
+                jobcategory=job_data.get("job_category"),
+                jobsalaryrange=job_data.get("salary_range"),
+                jobdescription=job_data.get("job_description"),
+                responsibilities=job_data.get("responsibilities"),
+                requirements=job_data.get("skills_requirements")
+            )
+
+            jobs_created += 1
 
         except Exception as e:
-            return Response({
-                "error": str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            continue
+
+    return Response({"message": f"{jobs_created} job(s) created successfully."}, status=status.HTTP_200_OK)
+
 
 
 def save_logos_for_instances(request):
@@ -477,5 +556,3 @@ def save_logos_for_instances(request):
             print(f"Failed to fetch logo for {instance.institution}: {e}")
 
     return HttpResponse("Logos have been processed.")
-
-
