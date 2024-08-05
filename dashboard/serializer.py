@@ -12,6 +12,11 @@ class Jobserializer(serializers.ModelSerializer):
         model = Jobs
         exclude = ['applied', 'payment_data', 'is_paidfor']  # Or specify the fields you want to expose
 
+class seoserializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Jobs
+        fields = ['jobtitle', 'jobdescription']
 
 class Workexperienceserialaizer(serializers.ModelSerializer):
     class Meta:

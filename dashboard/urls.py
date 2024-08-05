@@ -22,6 +22,7 @@ urlpatterns = [
     path('savedtimelinepost/', savedtimelinepost, name='savedtimelinepost'),
     path('unlike_post/', unlike_post, name='unlike_post'),
     path('userjobsdetail/', userjobsdetail, name='userjobsdetail'),
+    path('seodetail/<int:id>/', seodetail, name='seodetail'),
     path('keyword/', keyword, name='keyword'),
     path('newcomment/<int:id>/', newcomment, name='newcomment'),
     path('messageportal/<int:id>/', messageportals, name='messageportal'),

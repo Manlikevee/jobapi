@@ -1560,3 +1560,13 @@ class UniversityListCreateView(generics.ListCreateAPIView):
 
 
 
+@api_view(['GET'])
+def seodetail(request, id):
+
+    jobdetails = get_object_or_404(Jobs, id=id)
+    jobdetail = seoserializer(jobdetails)
+    context = {
+        'jobdetail': jobdetail.data,
+    }
+
+    return Response(context, status=status.HTTP_200_OK)

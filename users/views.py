@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core import mail
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
+from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
@@ -234,8 +235,6 @@ class VisitorRequestAPIView(APIView):
         # Extract staff_id from the incoming data
         staff_id = request.data.get('staff_id')
 
-
-
         # Fetch the corresponding employee object
         try:
             employee = employees.objects.get(staff_id=staff_id)
@@ -265,7 +264,6 @@ class VisitorRequestAPIView(APIView):
         serializer = VisitorRequestSerializer(visitor_request)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
 
 @api_view(['POST'])
@@ -350,8 +348,6 @@ def verifyvisitor(request):
                         status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-
-
 @api_view(['POST'])
 def getvisitordetails(request):
     if request.method == 'POST':
@@ -372,8 +368,6 @@ def getvisitordetails(request):
     # Return an error response for unsupported methods
     return JsonResponse({'message': 'Invalid request method'},
                         status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-
 
 
 @api_view(['POST'])
@@ -418,15 +412,13 @@ def logoutvisitor(request):
                         status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-
-
-
 import json
 import re
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from groq import Groq  # Ensure you have the correct import for your Groq client
+
 
 class GroqChatCompletionView(APIView):
     def post(self, request):
@@ -451,7 +443,7 @@ class GroqChatCompletionView(APIView):
             json_str = None
             try:
                 # Try to find the JSON object by looking for curly braces
-                json_str = response_content[response_content.index('{'):response_content.rindex('}')+1]
+                json_str = response_content[response_content.index('{'):response_content.rindex('}') + 1]
                 job_data = json.loads(json_str)
             except (ValueError, json.JSONDecodeError) as e:
                 return Response({
@@ -467,10 +459,10 @@ class GroqChatCompletionView(APIView):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-
 def save_logos_for_instances(request):
-    instances = exceltest.objects.all()
+    instances = exceltest.objects.filter(Q(schoollogo='') | Q(schoollogo=None)
+                                         )
+    print(instances)
     for instance in instances:
         try:
             # Fetch the image from the logourl
@@ -485,3 +477,5 @@ def save_logos_for_instances(request):
             print(f"Failed to fetch logo for {instance.institution}: {e}")
 
     return HttpResponse("Logos have been processed.")
+
+
