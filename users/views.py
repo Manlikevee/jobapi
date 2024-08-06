@@ -431,7 +431,7 @@ def groq_chat_completion_view(request):
             return Response({"error": "No company found"}, status=status.HTTP_404_NOT_FOUND)
 
         client = Groq(
-            api_key='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',
+            api_key='',
         )
 
         # Define the chat message
@@ -470,7 +470,7 @@ from requests.structures import CaseInsensitiveDict
 
 @api_view(['POST'])
 def gemini_chat_completion_view(request):
-    api_key = "AIzaSyBzUUHpfx__XkKjMH873YiVE6XJEq-kq0Q"
+    api_key = ""
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={api_key}"
 
     headers = CaseInsensitiveDict()
