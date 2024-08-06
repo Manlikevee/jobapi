@@ -1599,3 +1599,16 @@ def generaterandomref(request):
     Jobs.objects.bulk_update(refs_to_update, ['ref'])
 
     return JsonResponse({'status': 'success', 'message': 'References generated successfully'})
+
+
+
+@api_view(['GET'])
+def jobdetail(request, id):
+
+    jobdetails = get_object_or_404(Jobs, ref=id)
+    jobdetail = Jobserializer(jobdetails)
+    context = {
+        'jobdetail': jobdetail.data,
+    }
+
+    return Response(context, status=status.HTTP_200_OK)

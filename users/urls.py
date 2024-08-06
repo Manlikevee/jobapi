@@ -1,6 +1,6 @@
 from django.urls import path, include
 
-from dashboard.views import alljobcards, generaterandomref
+from dashboard.views import alljobcards, generaterandomref, jobdetail
 from .views import *
 from django.contrib.auth import views as auth_view
 from rest_framework.routers import DefaultRouter
@@ -29,6 +29,8 @@ urlpatterns = [
          name='save_logos_for_instances'),
     path('alljobcards', alljobcards,
          name='alljobcards'),
+    path('roledetail/<int:id>/', jobdetail,
+         name='jobdetail'),
 
     path('generate-random-ref/', generaterandomref, name='generate_random_ref'),
 ]
