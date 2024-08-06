@@ -45,12 +45,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-
-        # Add custom claims
         token['username'] = user.username
         token['email'] = user.email
+        token['is_corporate'] = user.is_staff
 
-        # ...
         try:
             profile = Profile.objects.get(user=user)
             token['is_updated'] = profile.profile_verified
@@ -556,3 +554,18 @@ def save_logos_for_instances(request):
             print(f"Failed to fetch logo for {instance.institution}: {e}")
 
     return HttpResponse("Logos have been processed.")
+
+
+
+
+
+def make_all_users_staff(request):
+    users = User.objects.all()
+    updated_count = 0
+    for user in users:
+        if not user.is_staff:
+            user.is_staff = True
+            user.save()
+            updated_count += 1
+
+    return JsonResponse({'message': f'Successfully updated {updated_count} users to staff members.'})
