@@ -17,7 +17,7 @@ class Jobserializer(serializers.ModelSerializer):
     organization = companyserializer()
     class Meta:
         model = Jobs
-        fields = ['jobtitle', 'jobservice', 'joblocation', 'jobcategory', 'jobsalaryrange', 'workinglevel', 'jobdescription', 'responsibilities', 'requirements', 'organization']  # Or specify the fields you want to expose
+        fields = ['jobtitle','ref', 'jobservice', 'joblocation', 'jobcategory', 'jobsalaryrange', 'workinglevel', 'jobdescription', 'responsibilities', 'requirements', 'organization']  # Or specify the fields you want to expose
 
 
 

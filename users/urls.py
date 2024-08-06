@@ -1,6 +1,6 @@
 from django.urls import path, include
 
-from dashboard.views import alljobcards
+from dashboard.views import alljobcards, generaterandomref
 from .views import *
 from django.contrib.auth import views as auth_view
 from rest_framework.routers import DefaultRouter
@@ -30,7 +30,7 @@ urlpatterns = [
     path('alljobcards', alljobcards,
          name='alljobcards'),
 
-
+    path('generate-random-ref/', generaterandomref, name='generate_random_ref'),
 ]
 
 

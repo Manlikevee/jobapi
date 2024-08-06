@@ -1580,3 +1580,22 @@ def alljobcards(request):
     }
 
     return Response(context, status=status.HTTP_200_OK)
+
+
+def generaterandomref(request):
+    jobcard = Jobs.objects.filter(ref=1).order_by('-id')
+
+
+    refs_to_update = []
+    uuid_gen = shortuuid.ShortUUID(alphabet="0123456789")
+    for a in jobcard:
+
+        new_ref = uuid_gen.random(length=10)
+        while Jobs.objects.filter(ref=new_ref).exists():
+            new_ref = uuid_gen.random(length=10)
+        a.ref = new_ref
+        refs_to_update.append(a)
+
+    Jobs.objects.bulk_update(refs_to_update, ['ref'])
+
+    return JsonResponse({'status': 'success', 'message': 'References generated successfully'})

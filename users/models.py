@@ -587,7 +587,7 @@ class Jobs(models.Model):
         ('confirmed', 'confirmed'),
         ('cancelled', 'cancelled'),
     ]
-
+    ref = models.BigIntegerField(blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     organization = models.ForeignKey('company', on_delete=models.CASCADE, null=True, blank=True)
     jobtitle = models.CharField(blank=True, null=True, max_length=600)
@@ -619,12 +619,12 @@ class Jobs(models.Model):
     last_seen = models.DateTimeField(default=now, null=True, blank=True)
     tags = TaggableManager()
 
-    def number_of_likes(self):
-        return self.likes.count()
-
-    def number_of_applied(self):
-        return self.applied.count()
-
+    def save(self, *args, **kwargs):
+        if not self.ref:
+            self.ref = shortuuid.ShortUUID(alphabet="0123456789").random(length=10)
+            while Jobs.objects.filter(ref=self.ref).exists():
+                self.ref = shortuuid.ShortUUID(alphabet="0123456789").random(length=10)
+        super().save(*args, **kwargs)
     def __str__(self):
         return self.user.username
 
