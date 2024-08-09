@@ -13,6 +13,8 @@ router = DefaultRouter()
 
 urlpatterns = [
 
+
+
     path('chatdashboard', chatdashboard, name='chatdashboard'),
     path('userdashboarddata', jobseekerdashboard, name='jobseekerdashboard'),
     path('userprofile', userprofile, name='userprofile'),
