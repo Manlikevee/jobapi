@@ -1634,7 +1634,7 @@ def createjobpost(request):
             managerial_experience=managerial_experience,
             board_experience=board_experience,
             jobsalaryrange=remuneration,
-            selected_state=selected_state,
+            joblocation=selected_state,
             selected_lga=selected_lga,
             user=request_user,
             organization=request_company,
