@@ -53,5 +53,5 @@ urlpatterns = [
     path('deletemessageportals/<int:id>', deletemessageportals, name='deletemessageportals'),
     path('api/create-company/', create_company, name='create-company'),
     path('universities/', UniversityListCreateView.as_view(), name='university-list-create'),
-
+    path('createjobpost/', createjobpost, name='createjobpost'),
 ]

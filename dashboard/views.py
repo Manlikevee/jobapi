@@ -10,7 +10,7 @@ from rest_framework import status, generics
 from rest_framework.decorators import permission_classes, api_view, parser_classes
 from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from taggit.models import Tag
@@ -18,7 +18,7 @@ from taggit.models import Tag
 from .serializer import *
 from users.models import *
 from users.serializer import *
-# Create your views here.
+
 from faker import Faker
 
 fake = Faker()
@@ -692,14 +692,6 @@ def messageportals(request, id):
                         field_name = key.split('[')[-1][:-1]  # Extract field name
                         data_dict[field_name] = value  # Assuming each key has only one value
 
-
-
-
-
-
-
-
-
                 data_dict['datetime'] = str(vee)
                 data_dict['senderid'] = messagetone.reciever.id
                 data_dict['recieverid'] = request.user.id
@@ -907,10 +899,6 @@ def userqrcards(request):
 
     }
     return Response(context, status=status.HTTP_200_OK)
-
-
-
-
 
 
 import random
@@ -1494,8 +1482,6 @@ class SearchEmployeeByPhoneNumberAPIView(APIView):
                             status=status.HTTP_404_NOT_FOUND)
 
 
-
-
 @api_view(['POST'])
 def upload_image(request):
     if request.method == 'POST':
@@ -1504,9 +1490,6 @@ def upload_image(request):
         serializerz.save()
         serializer = ImageSerializer(serializerz)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-
 
 
 @api_view(['POST'])
@@ -1545,8 +1528,6 @@ def create_company(request):
     return Response({'message': 'Company created successfully'}, status=status.HTTP_201_CREATED)
 
 
-
-
 class UniversityListCreateView(generics.ListCreateAPIView):
     queryset = exceltest.objects.all()
     serializer_class = Universitydata
@@ -1559,10 +1540,8 @@ class UniversityListCreateView(generics.ListCreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-
 @api_view(['GET'])
 def seodetail(request, id):
-
     jobdetails = get_object_or_404(Jobs, ref=id)
     jobdetail = seoserializer(jobdetails)
     context = {
@@ -1570,6 +1549,7 @@ def seodetail(request, id):
     }
 
     return Response(context, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 def alljobcards(request):
@@ -1584,7 +1564,6 @@ def alljobcards(request):
 
 def generaterandomref(request):
     jobcard = Jobs.objects.filter(ref=1).order_by('-id')
-
 
     refs_to_update = []
     uuid_gen = shortuuid.ShortUUID(alphabet="0123456789")
@@ -1601,10 +1580,8 @@ def generaterandomref(request):
     return JsonResponse({'status': 'success', 'message': 'References generated successfully'})
 
 
-
 @api_view(['GET'])
 def jobdetail(request, id):
-
     jobdetails = get_object_or_404(Jobs, ref=id)
     jobdetail = Jobserializer(jobdetails)
     context = {
@@ -1612,3 +1589,62 @@ def jobdetail(request, id):
     }
 
     return Response(context, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAdminUser])
+def createjobpost(request):
+    request_user = request.user
+    request_company = company.objects.filter(user=request_user).first()
+
+    if request_company:
+        data = request.data
+
+        # Extracting data
+        selected_skills = data.get('selectedSkills', [])
+        role_title = data.get('roleTitle', '')
+        number_of_seats = data.get('numberOfSeats', '')
+        industry = data.get('industry', '')
+        boardseat_type = data.get('boardseatType', '')
+        role_status = data.get('roleStatus', '')
+        tenure = data.get('tenure', '')
+        work_experience = data.get('workExperience', '')
+        managerial_experience = data.get('managerialExperience', '')
+        board_experience = data.get('boardExperience', '')
+        remuneration = data.get('remuneration', '')
+        remuneration_for_role = data.get('remunerationForRole', '')
+        skills = data.get('skills', [])
+        requirements = data.get('requirements', [])
+        job_description = data.get('jobDescription', '')
+        selected_state = data.get('selectedState', '')
+        selected_lga = data.get('selectedLga', '')
+
+        # Create and save the Job instance
+        job_details = Jobs.objects.create(
+            jobtitle=role_title,
+            jobservice=industry,
+            jobmaximumapplication=number_of_seats,
+            jobdescription=job_description,
+            requirements=requirements,
+            responsibilities=skills,
+            workinglevel=work_experience,
+            jobcategory=industry,
+            boardseat_type=boardseat_type,
+            tenure=tenure,
+            managerial_experience=managerial_experience,
+            board_experience=board_experience,
+            jobsalaryrange=remuneration,
+            selected_state=selected_state,
+            selected_lga=selected_lga,
+            user=request_user,
+            organization=request_company,
+            selected_skills=selected_skills
+        )
+
+        # Serialize the job details
+        serializer = Jobserializer(job_details)
+
+        # Return the serialized data as a response
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    return Response({"error": "Company not found for this user."}, status=status.HTTP_400_BAD_REQUEST)
