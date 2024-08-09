@@ -1629,7 +1629,7 @@ def createjobpost(request):
             responsibilities=skills,
             workinglevel=work_experience,
             jobcategory=industry,
-            boardseat_type=boardseat_type,
+            board_type=boardseat_type,
             tenure=tenure,
             managerial_experience=managerial_experience,
             board_experience=board_experience,
